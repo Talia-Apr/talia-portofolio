@@ -243,23 +243,30 @@ export default function PortfolioFolder() {
     </div>
   );
 }
-
 function IntroPane() {
-  const chip =
-    "rounded-md bg-[var(--intro-chip-bg)] px-1.5 py-0.5 font-semibold text-[var(--intro-title)]";
   return (
     <div className="h-full flex flex-col items-center justify-center text-center gap-3 sm:gap-4">
       <h1 className="font-display font-bold text-3xl sm:text-5xl text-[var(--intro-title)]">
-        Hi, I’m Talia!
+        Hi, I'm <span className="text-[var(--accent-contact)]">Talia!</span>
       </h1>
       <h2 className="font-display font-bold text-xl sm:text-3xl text-[var(--intro-subtitle)]">
-        I’m a Software Developer
+        I'm a Software Developer
       </h2>
       <p className="font-body text-sm sm:text-xl leading-relaxed text-[var(--intro-body)] max-w-[34rem] pt-1 sm:pt-2">
         I transform complex ideas into clean, scalable web &amp; mobile solutions
         combining intuitive UI/UX design with robust architectures using{" "}
-        <span className={chip}>React</span>, <span className={chip}>Next.js</span>,{" "}
-        <span className={chip}>TypeScript</span>, and modern backend tech.
+        <span className="font-semibold" style={{ color: "var(--accent-project)" }}>
+          React
+        </span>
+        ,{" "}
+        <span className="font-semibold" style={{ color: "var(--accent-cert)" }}>
+          Next.js
+        </span>
+        ,{" "}
+        <span className="font-semibold" style={{ color: "var(--accent-contact)" }}>
+          TypeScript
+        </span>
+        , and modern backend tech.
       </p>
     </div>
   );
