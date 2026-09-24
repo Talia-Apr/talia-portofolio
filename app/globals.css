@@ -1,0 +1,303 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  height: 100%;
+}
+
+/* ---- Theme tokens ---------------------------------------------------- */
+/* Light mode (default) */
+:root {
+  --page-bg: #f7f7f7;
+
+  --backdrop-color: #f7f7f7;
+
+  --lace-fill: #ffffff;
+  --lace-shadow: rgba(219, 39, 119, 0.15);
+
+  /* Folder body: a vertical pink gradient, light at the top of the
+     page down to a deeper rose at the bottom. */
+  --folder-grad-top: #fda7be;
+  --folder-grad-bottom: #fb6f95;
+  --folder-resting: var(--folder-grad-top);
+
+  --tab-inactive-bg: #ffffff;
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --shadow-folder-color: rgba(219, 39, 119, 0.4);
+
+  --tab-active-bg: #FFDBDB;
+  --tab-shadow-active: 0 -4px 10px -6px rgba(0, 0, 0, 0.15);
+  --tab-shadow-inactive: 0 -2px 6px -4px rgba(0, 0, 0, 0.12);
+
+  /* Intro text: three distinct tones so the hierarchy is clear. */
+  --intro-title: #4a0524;
+  --intro-subtitle: #a3134f;
+  --intro-body: #5c0a2e;
+  --intro-chip-bg: rgba(255, 255, 255, 0.5);
+
+  /* About pane: photo frame + CV button */
+  --frame-border: #ffffff;
+  --frame-shadow: rgba(122, 15, 61, 0.25);
+  --btn-bg: #7a0f3d;
+  --btn-bg-hover: #5c0a2e;
+  --btn-text: #ffffff;
+
+  /* Project cards: tech chip + type badge + link button colors */
+  --chip-bg: rgba(122, 15, 61, 0.08);
+  --chip-text: #7a0f3d;
+  --badge-team-bg: #dff3e6;
+  --badge-team-text: #1f7a4d;
+  --badge-final-bg: #ffe4c4;
+  --badge-final-text: #9a5b12;
+  --link-btn-bg: rgba(122, 15, 61, 0.08);
+  --link-btn-bg-hover: rgba(122, 15, 61, 0.16);
+  --link-btn-text: #7a0f3d;
+
+  --ink-strong: #7a0f3d;
+  --ink-about: #7a0f3d;
+  --ink-project: #7a0f3d;
+  --ink-cert: #7a0f3d;
+  --ink-contact: #7a0f3d;
+
+  /* Deep rose tones used for role/issuer/label text inside the panes —
+     all within the same pink family now, instead of a different hue
+     per section, to stay cohesive with the pink folder. */
+  --accent-about: #b23763;
+  --accent-project: #a42456;
+  --accent-cert: #8f1949;
+  --accent-contact: #7a0f3d;
+
+  /* Tab backgrounds: four shades of pink, palest to deepest. */
+  --wash-about: #FDC3D1;
+  --wash-project: #FDA8BF;
+  --wash-cert: #FB8CAD;
+  --wash-contact: #FF5C89;
+
+  /* Tab label color: white only passes contrast on the two darkest
+     tabs; the lighter ones use a dark rose instead so every label
+     stays readable (WCAG AA, 4.5:1+). */
+  --tab-text-about: #ffffff;
+  --tab-text-project: #ffffff;
+  --tab-text-cert: #ffffff;
+  --tab-text-contact: #ffffff;
+
+  --icon-off: #b23763;
+  --icon-on: #ffffff;
+
+  /* Wave hill at the bottom of the page */
+  --wave-top: #8fd4a0;
+  --wave-bottom: #3f8f66;
+
+  /* Mascot logo riding the wave: plain white, no glow, in light mode */
+  --logo-color: #ffffff;
+  --logo-glow: none;
+}
+
+/* Dark mode overrides */
+.dark {
+  --page-bg: #171426;
+
+  --backdrop-color: #171426;
+
+  --lace-fill: #2a2440;
+  --lace-shadow: rgba(236, 95, 153, 0.3);
+
+  --folder-grad-top: #5c2440;
+  --folder-grad-bottom: #35132a;
+  --folder-resting: var(--folder-grad-top);
+
+  --tab-inactive-bg: #241f38;
+  --card-bg: rgba(255, 255, 255, 0.06);
+  --shadow-folder-color: rgba(236, 95, 153, 0.5);
+
+  --tab-active-bg: #4a1e35;
+  --tab-shadow-active: 0 -4px 10px -6px rgba(0, 0, 0, 0.6);
+  --tab-shadow-inactive: 0 -2px 6px -4px rgba(0, 0, 0, 0.5);
+
+  --intro-title: #ffffff;
+  --intro-subtitle: #ffa3c8;
+  --intro-body: #f6d9e4;
+  --intro-chip-bg: rgba(255, 255, 255, 0.12);
+
+  --frame-border: rgba(255, 255, 255, 0.18);
+  --frame-shadow: rgba(0, 0, 0, 0.5);
+  --btn-bg: #f6d9e4;
+  --btn-bg-hover: #ffffff;
+  --btn-text: #35132a;
+
+  --chip-bg: rgba(255, 255, 255, 0.1);
+  --chip-text: #f6d9e4;
+  --badge-team-bg: rgba(52, 199, 120, 0.18);
+  --badge-team-text: #7ee2a8;
+  --badge-final-bg: rgba(255, 176, 59, 0.18);
+  --badge-final-text: #ffc978;
+  --link-btn-bg: rgba(255, 255, 255, 0.1);
+  --link-btn-bg-hover: rgba(255, 255, 255, 0.2);
+  --link-btn-text: #f6d9e4;
+
+  --ink-strong: #f6d9e4;
+  --ink-about: #f6d9e4;
+  --ink-project: #f6d9e4;
+  --ink-cert: #f6d9e4;
+  --ink-contact: #f6d9e4;
+
+  --accent-about: #f4a8c4;
+  --accent-project: #f28fb5;
+  --accent-cert: #ef79a8;
+  --accent-contact: #ec5f99;
+
+  --wash-about: #4a2338;
+  --wash-project: #5c2a44;
+  --wash-cert: #6e3350;
+  --wash-contact: #7a3959;
+
+  /* White reads fine against every tab shade in dark mode. */
+  --tab-text-about: #ffffff;
+  --tab-text-project: #ffffff;
+  --tab-text-cert: #ffffff;
+  --tab-text-contact: #ffffff;
+
+  --icon-off: #ffffff;
+  --icon-on: #b23763;
+
+  --wave-top: #2f5a41;
+  --wave-bottom: #16301f;
+
+  /* Mascot logo glows warm yellow in dark mode */
+  --logo-color: #ffe066;
+  --logo-glow: drop-shadow(0 0 4px rgba(255, 224, 102, 0.95))
+    drop-shadow(0 0 14px rgba(255, 210, 60, 0.9))
+    drop-shadow(0 0 30px rgba(255, 193, 7, 0.7))
+    drop-shadow(0 0 50px rgba(255, 193, 7, 0.4));
+}
+
+body {
+  background-color: var(--page-bg);
+  transition: background-color 0.4s ease;
+}
+
+/* Green wave hill fixed to the bottom of the page. Two copies of the
+   same wave sit side by side and slide left forever; because the SVG
+   is exactly two periods wide, the moment the first copy slides fully
+   off-screen the second is in the exact position the first started
+   in, so the motion loops with no visible seam. */
+@keyframes wave-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+/* Mascot logo: stays put in the corner, gently bobbing as if riding
+   the wave beneath it, instead of sliding off-screen with it. */
+@keyframes logo-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+}
+.talogo-mark {
+  animation: logo-bob 4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .talogo-mark {
+    animation: none;
+  }
+}
+
+.wave-layer {
+  animation: wave-drift 16s linear infinite;
+  width: 200%;
+}
+.wave-layer--back {
+  animation-duration: 24s;
+  animation-direction: reverse;
+  opacity: 0.7;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wave-layer {
+    animation: none;
+  }
+}
+
+/* Solid backdrop behind the folder */
+.candy-backdrop {
+  background-color: var(--backdrop-color);
+  transition: background-color 0.4s ease;
+}
+
+/* Lace petals: each is a small circle (see LaceStrip in Backdrop.tsx)
+   that grows and shrinks on its own timer, so the row reads as an
+   alternating "some big, some small" ripple. */
+.lace-petal {
+  background: var(--lace-fill);
+  filter: drop-shadow(0 1px 2px var(--lace-shadow));
+  animation-name: lace-breathe;
+  animation-duration: 4.5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes lace-breathe {
+  0%,
+  100% {
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lace-petal {
+    animation: none;
+  }
+}
+
+/* Twinkling stars & dots scattered across the backdrop */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+.twinkle {
+  animation-name: twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .twinkle {
+    animation: none;
+    opacity: 0.85;
+  }
+}
+
+/* Inner page of the folder scrolls, but the scrollbar itself stays
+   invisible so it doesn't interrupt the folder's look on desktop. */
+.folder-scroll::-webkit-scrollbar {
+  display: none;
+}
+.folder-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Hides the scrollbar on the tab row so it can scroll sideways on very
+   small screens without looking like a visible scroll track. */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
