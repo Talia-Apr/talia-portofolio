@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import Image from "next/image";
-
 
 type SectionId = "about" | "project" | "certification" | "contact";
 
@@ -110,6 +109,48 @@ const PROJECTS: Project[] = [
   },
 ];
 
+// ---- Contact tab content ------------------------------------------------
+const CONTACT_LINKS = [
+  {
+    label: "Email",
+    value: "talia.aprianti@email.com",
+    href: "mailto:talia.aprianti@email.com",
+  },
+  {
+    label: "GitHub",
+    value: "github.com/username",
+    href: "https://github.com/username",
+  },
+];
+
+// Guestbook: messages are posted to and read from an API route backed
+// by real storage, so they persist after the site is closed and are
+// visible to every visitor, not just the person who wrote them. See
+// app/api/messages/route.ts.
+const MESSAGES_API_URL = "/api/messages";
+const MAX_MESSAGE_LENGTH = 500;
+const MAX_NAME_LENGTH = 40;
+
+type GuestMessage = {
+  id: string;
+  name: string;
+  message: string;
+  createdAt: string;
+};
+
+function formatRelativeTime(iso: string): string {
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const diffSec = Math.round(diffMs / 1000);
+  if (diffSec < 60) return "just now";
+  const diffMin = Math.round(diffSec / 60);
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHour = Math.round(diffMin / 60);
+  if (diffHour < 24) return `${diffHour}h ago`;
+  const diffDay = Math.round(diffHour / 24);
+  if (diffDay < 30) return `${diffDay}d ago`;
+  return new Date(iso).toLocaleDateString();
+}
+
 const CERTIFICATIONS = [
   { name: "Google UX Design Professional Certificate", year: "2024", issuer: "Google / Coursera" },
   { name: "Fundamental Front-End Web Development", year: "2023", issuer: "Dicoding Indonesia" },
@@ -118,32 +159,47 @@ const CERTIFICATIONS = [
 ];
 
 // ---- About tab content ------------------
-const PROFILE_PHOTO = "/images/talia.jpg"; 
-const CV_URL = "/cv/Talia-Aprianti-CV.pdf"; 
+const PROFILE_PHOTO = "/img/talia.png"; 
+const CV_URL = "/doc/cv.pdf"; 
 
 const EDUCATION = [
   {
-    school: "University Name",
-    detail: "Bachelor's Degree in Informatics",
-    period: "2022 - Present",
+    school: "UPN Veteran Jawa Timur",
+    detail: "Bachelor's Degree in Information Systems",
+    period: "Sep 2022 - Jun 2026",
+    logo: "/logo/upn.png", 
   },
   {
-    school: "Vocational High School (SMK) Name",
+    school: "SMKN 2 Buduran Sidoarjo",
     detail: "Software Engineering",
-    period: "2019 - 2022",
+    period: "Jul 2019 - Jul 2022",
+    logo: "/logo/smk.png",
+  },
+];
+
+const INTERNSHIPS = [
+  {
+    company: "PT Otak Kanan",
+    role: "Full Stack Developer Intern",
+    period: "Sep 2024 - Dec 2024",
+    logo: "/logo/ok.jpg",
+    points: [
+      "Developed responsive Point of Sales (POS) web interfaces using React.js, Tailwind CSS and Node.js",
+      "Integrated 4 core POS modules — Purchasing, Supplier, Customer, and User"
+    ],
   },
 ];
 
 const ORGANIZATIONS = [
   {
-    name: "Student Council (OSIS)",
-    role: "Head of Creative Division",
-    period: "2020 - 2021",
-  },
-  {
-    name: "Programming Club",
-    role: "Core Member",
-    period: "2023 - 2024",
+    name: "UKM Badminton UPNVJT",
+    role: "Head of KOMINFO Departement",
+    period: "Jul 2024 - May 2025",
+    logo: "/logo/ukm.png",
+    points: [
+      "Led digital communication and social media strategies",
+      "Directed content production aligned with organizational goals"
+    ],
   },
 ];
 
@@ -243,6 +299,7 @@ export default function PortfolioFolder() {
     </div>
   );
 }
+
 function IntroPane() {
   return (
     <div className="h-full flex flex-col items-center justify-center text-center gap-3 sm:gap-4">
@@ -277,6 +334,18 @@ function AboutSectionTitle({ children }: { children: ReactNode }) {
     <h3 className="font-display font-bold text-lg sm:text-xl mb-3 text-[var(--intro-title)]">
       {children}
     </h3>
+  );
+}
+
+// Small square logo chip. The background stays plain white on purpose —
+// most institution/company logos are designed for a light background,
+// so this keeps every logo legible in both light and dark mode instead
+// of fading into a translucent dark card.
+function LogoBadge({ src, alt }: { src: string; alt: string }) {
+  return (
+    <div className="relative w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-xl bg-white ring-1 ring-black/5 shadow-sm overflow-hidden">
+      <Image src={src} alt={alt} fill sizes="48px" className="object-contain p-1.5" />
+    </div>
   );
 }
 
@@ -342,25 +411,65 @@ function AboutPane() {
         </div>
       </div>
 
-      {/* Education + Organizations */}
-      <div className="grid gap-6 md:grid-cols-2">
+      {/* Education + Internship + Organization */}
+      <div className="grid gap-6 md:grid-cols-3">
         <section>
           <AboutSectionTitle>Education</AboutSectionTitle>
           <ol className="space-y-3">
             {EDUCATION.map((e) => (
               <li
                 key={e.school}
-                className="rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
+                className="flex items-start gap-3 rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
               >
-                <p className="font-display font-bold text-sm sm:text-base">
-                  {e.school}
-                </p>
-                <p className="font-body text-sm text-[var(--intro-body)]">
-                  {e.detail}
-                </p>
-                <p className="font-body text-xs sm:text-sm font-semibold text-[var(--accent-about)] mt-1">
-                  {e.period}
-                </p>
+                <LogoBadge src={e.logo} alt={`${e.school} logo`} />
+                <div>
+                  <p className="font-display font-bold text-sm sm:text-base">
+                    {e.school}
+                  </p>
+                  <p className="font-body text-sm text-[var(--intro-body)]">
+                    {e.detail}
+                  </p>
+                  <p className="font-body text-xs sm:text-sm font-semibold text-[var(--accent-about)] mt-1">
+                    {e.period}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section>
+          <AboutSectionTitle>Internship Experience</AboutSectionTitle>
+          <ol className="space-y-3">
+            {INTERNSHIPS.map((i) => (
+              <li
+                key={i.company}
+                className="flex items-start gap-3 rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
+              >
+                <LogoBadge src={i.logo} alt={`${i.company} logo`} />
+                <div>
+                  <p className="font-display font-bold text-sm sm:text-base">
+                    {i.company}
+                  </p>
+                  <p className="font-body text-sm text-[var(--intro-body)]">
+                    {i.role}
+                  </p>
+                  <p className="font-body text-xs sm:text-sm font-semibold text-[var(--accent-about)] mt-1">
+                    {i.period}
+                  </p>
+                  {i.points && i.points.length > 0 && (
+                    <ul className="mt-2 space-y-1">
+                      {i.points.map((point) => (
+                        <li
+                          key={point}
+                          className="font-body text-xs sm:text-sm text-[var(--intro-body)] leading-relaxed pl-3.5 relative before:content-['•'] before:absolute before:left-0 before:text-[var(--accent-about)]"
+                        >
+                          {point}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </li>
             ))}
           </ol>
@@ -372,17 +481,32 @@ function AboutPane() {
             {ORGANIZATIONS.map((o) => (
               <li
                 key={o.name}
-                className="rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
+                className="flex items-start gap-3 rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
               >
-                <p className="font-display font-bold text-sm sm:text-base">
-                  {o.name}
-                </p>
-                <p className="font-body text-sm text-[var(--intro-body)]">
-                  {o.role}
-                </p>
-                <p className="font-body text-xs sm:text-sm font-semibold text-[var(--accent-about)] mt-1">
-                  {o.period}
-                </p>
+                <LogoBadge src={o.logo} alt={`${o.name} logo`} />
+                <div>
+                  <p className="font-display font-bold text-sm sm:text-base">
+                    {o.name}
+                  </p>
+                  <p className="font-body text-sm text-[var(--intro-body)]">
+                    {o.role}
+                  </p>
+                  <p className="font-body text-xs sm:text-sm font-semibold text-[var(--accent-about)] mt-1">
+                    {o.period}
+                  </p>
+                  {o.points && o.points.length > 0 && (
+                    <ul className="mt-2 space-y-1">
+                      {o.points.map((point) => (
+                        <li
+                          key={point}
+                          className="font-body text-xs sm:text-sm text-[var(--intro-body)] leading-relaxed pl-3.5 relative before:content-['•'] before:absolute before:left-0 before:text-[var(--accent-about)]"
+                        >
+                          {point}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </li>
             ))}
           </ol>
@@ -473,19 +597,19 @@ function ProjectPane() {
   return (
     <div className="space-y-4 text-[var(--ink-project)]">
       <h2 className="font-display font-bold text-2xl sm:text-3xl">Project</h2>
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid gap-5">
         {PROJECTS.map((p) => (
           <div
             key={p.name}
-            className="rounded-2xl bg-[var(--card-bg)] overflow-hidden shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md flex flex-col"
+            className="rounded-2xl bg-[var(--card-bg)] overflow-hidden shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md flex flex-col sm:flex-row"
           >
             {/* Thumbnail */}
-            <div className="relative w-full aspect-[16/10] bg-[var(--chip-bg)]">
+            <div className="relative w-full sm:w-64 md:w-72 flex-shrink-0 aspect-[16/10] sm:aspect-auto bg-[var(--chip-bg)]">
               <Image
                 src={p.image}
                 alt={`${p.name} preview`}
                 fill
-                sizes="(min-width: 768px) 50vw, 100vw"
+                sizes="(min-width: 640px) 18rem, 100vw"
                 className="object-cover"
               />
             </div>
@@ -566,11 +690,11 @@ function CertificationPane() {
   return (
     <div className="space-y-4 text-[var(--ink-cert)]">
       <h2 className="font-display font-bold text-2xl sm:text-3xl">Certification</h2>
-      <div className="grid gap-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         {CERTIFICATIONS.map((c) => (
           <div
             key={c.name}
-            className="flex items-center justify-between gap-3 rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm"
+            className="flex items-center justify-between gap-3 rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
           >
             <div>
               <p className="font-display font-bold text-sm sm:text-base">{c.name}</p>
@@ -589,29 +713,157 @@ function CertificationPane() {
 }
 
 function ContactPane() {
+  const [messages, setMessages] = useState<GuestMessage[]>([]);
+  const [loadingMessages, setLoadingMessages] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const [name, setName] = useState("");
+  const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(MESSAGES_API_URL)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load messages.");
+        return res.json();
+      })
+      .then((data: { messages?: GuestMessage[] }) => {
+        if (!cancelled) setMessages(data.messages ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setLoadError("Couldn't load messages right now.");
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingMessages(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const trimmed = message.trim();
+    if (!trimmed || submitting) return;
+
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const res = await fetch(MESSAGES_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, message: trimmed }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data?.error ?? "Failed to send message.");
+      }
+      setMessages((prev) => [data.message as GuestMessage, ...prev]);
+      setMessage("");
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : "Failed to send message."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <div className="space-y-4 text-[var(--ink-contact)]">
       <h2 className="font-display font-bold text-2xl sm:text-3xl">Contact</h2>
-      <p className="font-body leading-relaxed">
-        Ada project atau kolaborasi yang ingin didiskusikan? Jangan ragu untuk menyapa,
-        ya!
-      </p>
-      <div className="grid gap-3">
-        {[
-          { label: "Email", value: "talia.aprianti@email.com" },
-          { label: "Instagram", value: "@talia.designs" },
-          { label: "LinkedIn", value: "linkedin.com/in/taliaaprianti" },
-        ].map((c) => (
-          <div
-            key={c.label}
-            className="rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm flex items-center justify-between"
-          >
-            <span className="font-body font-semibold text-sm text-[var(--accent-contact)]">
-              {c.label}
-            </span>
-            <span className="font-body text-sm">{c.value}</span>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Left: how to reach me */}
+        <div className="space-y-3">
+          <p className="font-body leading-relaxed">
+            Got a project or collaboration in mind? Feel free to reach out, or
+            just leave a message on the right.
+          </p>
+          {CONTACT_LINKS.map((c) => (
+            <a
+              key={c.label}
+              href={c.href}
+              target={c.href.startsWith("http") ? "_blank" : undefined}
+              rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
+              className="rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm flex items-center justify-between gap-3 transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
+            >
+              <span className="font-body font-semibold text-sm text-[var(--accent-contact)]">
+                {c.label}
+              </span>
+              <span className="font-body text-sm truncate">{c.value}</span>
+            </a>
+          ))}
+        </div>
+
+        {/* Right: guestbook — send + read messages, stored server-side */}
+        <div className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-2">
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name (optional)"
+              maxLength={MAX_NAME_LENGTH}
+              className="w-full rounded-xl bg-[var(--card-bg)] px-3 py-2 font-body text-sm text-[var(--ink-contact)] placeholder:opacity-60 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-contact)]"
+            />
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Leave a message..."
+              maxLength={MAX_MESSAGE_LENGTH}
+              rows={3}
+              required
+              className="w-full rounded-xl bg-[var(--card-bg)] px-3 py-2 font-body text-sm text-[var(--ink-contact)] placeholder:opacity-60 shadow-sm resize-none focus:outline-none focus:ring-2 focus:ring-[var(--accent-contact)]"
+            />
+            <div className="flex items-center justify-between gap-3">
+              {submitError ? (
+                <p className="font-body text-xs text-red-500">{submitError}</p>
+              ) : (
+                <span />
+              )}
+              <button
+                type="submit"
+                disabled={submitting || !message.trim()}
+                className="rounded-full bg-[var(--btn-bg)] px-5 py-2 font-display font-bold text-sm text-[var(--btn-text)] shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md hover:bg-[var(--btn-bg-hover)] disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-sm disabled:cursor-not-allowed"
+              >
+                {submitting ? "Sending…" : "Send"}
+              </button>
+            </div>
+          </form>
+
+          <div className="folder-scroll space-y-2 max-h-64 overflow-y-auto pr-1">
+            {loadingMessages && (
+              <p className="font-body text-sm opacity-70">Loading messages…</p>
+            )}
+            {!loadingMessages && loadError && (
+              <p className="font-body text-sm text-red-500">{loadError}</p>
+            )}
+            {!loadingMessages && !loadError && messages.length === 0 && (
+              <p className="font-body text-sm opacity-70">
+                No messages yet — be the first to say hi!
+              </p>
+            )}
+            {messages.map((m) => (
+              <div
+                key={m.id}
+                className="rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-display font-bold text-sm">{m.name}</p>
+                  <span className="font-body text-[11px] opacity-60 whitespace-nowrap">
+                    {formatRelativeTime(m.createdAt)}
+                  </span>
+                </div>
+                <p className="font-body text-sm mt-1 leading-relaxed whitespace-pre-wrap break-words">
+                  {m.message}
+                </p>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );

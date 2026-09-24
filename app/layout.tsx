@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   title: "talia's zip",
   description: "Portofolio Talia Aprianti — about, project, certification, contact",
   icons: {
-    icon: "/talogo.png",
+    icon: "/logo/talogo.png",
   },
 };
 
