@@ -198,7 +198,7 @@ const ORGANIZATIONS = [
     logo: "/logo/ukm.png",
     points: [
       "Led digital communication and social media strategies",
-      "Directed content production aligned with organizational goals"
+      "Directed content production aligned with organizational goals",
     ],
   },
 ];
