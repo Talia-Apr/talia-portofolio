@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
@@ -56,11 +57,12 @@ type Project = {
   name: string;
   role: string;
   type: ProjectType;
-  image: string; // put project thumbnails in /public/projects/
+  image: string; 
   desc: string;
   tech: string[];
-  githubUrl?: string; // omit if there's no public repo
-  figmaUrl?: string; // omit if there's no public Figma file
+  liveUrl?: string;
+  githubUrl?: string; 
+  figmaUrl?: string; 
 };
 
 const PROJECT_TYPE_LABEL: Record<ProjectType, string> = {
@@ -70,42 +72,120 @@ const PROJECT_TYPE_LABEL: Record<ProjectType, string> = {
 
 const PROJECTS: Project[] = [
   {
-    name: "Rumah Baca — Website Komunitas Literasi",
-    role: "UI/UX Design & Front-end",
-    type: "team",
-    image: "/projects/rumah-baca.png",
-    desc: "Merancang ulang alur baca dan katalog buku digital agar relawan dan pembaca lebih mudah menemukan koleksi, lengkap dengan sistem tag dan pencarian cepat.",
-    tech: ["Figma", "Next.js", "Tailwind CSS"],
-    githubUrl: "https://github.com/username/rumah-baca",
-    figmaUrl: "https://figma.com/file/rumah-baca",
-  },
-  {
-    name: "Kenari — Aplikasi Pencatat Keuangan Harian",
-    role: "Product Design",
+    name: "Workshop Service Management",
+    role: "Full Stack Developer",
     type: "final",
-    image: "/projects/kenari.png",
-    desc: "Studi kasus desain aplikasi mobile untuk mencatat pengeluaran harian dengan visual yang ringan, ditujukan untuk pengguna pemula yang baru belajar mengatur keuangan.",
-    tech: ["Figma", "Design System"],
-    figmaUrl: "https://figma.com/file/kenari",
+    image: "/img/bengkel.jpg",
+    desc: "A web-based workshop management system for managing customers, vehicles, and service transactions. It features Ollama-powered Text-to-SQL, enabling owner to query database information using natural language and visualize the results through interactive charts.",
+    tech: ["Next.js", "Tailwind CSS", "Ollama", "MySQL"],
+    liveUrl: "https://bengkelnugrahajaya.vercel.app",
+    githubUrl: "https://github.com/Talia-Apr/web-bengkel.git",
+    figmaUrl: "https://www.figma.com/design/fUF4qqRt4rQsZbaWJeyUSW/Bengkel-Nugraha?node-id=1-6674&t=rg62OhAnejp9erjT-1"
   },
   {
-    name: "Studio Anggrek — Identitas Visual & Landing Page",
-    role: "Brand & Web Design",
+    name: "Point of Sales (POS)",
+    role: "Full Stack Developer",
     type: "team",
-    image: "/projects/studio-anggrek.png",
-    desc: "Membangun identitas visual pastel yang hangat untuk studio bunga kecil, diterjemahkan ke landing page satu halaman yang ramah di perangkat mobile.",
-    tech: ["Figma", "React", "Tailwind CSS"],
-    githubUrl: "https://github.com/username/studio-anggrek",
-    figmaUrl: "https://figma.com/file/studio-anggrek",
+    image: "/img/pos.jpg",
+    desc: "A web-based Point of Sales system for managing sales transactions, customer data, and business activities, featuring real-time interactive charts for monitoring sales performance.",
+    tech: ["React.js", "Tailwind CSS", "Node.js", "MySQL"],
+    githubUrl: "https://github.com/RismaParamesti/WEB-POS.git",
+    figmaUrl: "https://www.figma.com/proto/FAT7JelIKLYQdwNbEjtb1j/UI-UX-POS_MAGANG?node-id=1336-10024&starting-point-node-id=1336%3A10024&t=E7CTc0EK3T54PU81-1"
   },
   {
-    name: "Teman Belajar — Dashboard Kelas Online",
+    name: "Decision Making System",
+    role: "Front End Developer",
+    type: "team",
+    image: "/img/wavercision.jpg",
+    desc: "A web-based decision support system for selecting beach destinations across Java Island using AHP for criteria weighting and SAW for ranking destination alternatives based on user-defined criteria.",
+    tech: ["HTML", "CSS", "Javascript", "Bootstrap"],
+    githubUrl: "https://github.com/risdaah/spk-pantai.git"
+  },
+  {
+    name: "Used Cooking Oil Collector",
+    role: "Front End Developer",
+    type: "team",
+    image: "/img/sijelantah.jpg",
+    desc: "A web-based platform that connects households with used cooking oil to collectors. Users can submit their used cooking oil for pickup and receive monetary compensation, making waste collection more convenient and sustainable.",
+    tech: ["HTML", "CSS", "Javascript", "Bootstrap"],
+    githubUrl: "https://github.com/Talia-Apr/SIJELANTAH.git",
+    figmaUrl: "https://bit.ly/SIJELANTAH",
+  },
+  {
+    name: "Puzzle Game",
+    role: "Front End Developer",
+    type: "team",
+    image: "/img/funzle.jpg",
+    desc: "An interactive web-based puzzle game featuring a space-themed environment, designed to provide an engaging and challenging gameplay experience.",
+    tech: ["HTML", "CSS", "Javascript", "Bootstrap"],
+    githubUrl: "https://github.com/Talia-Apr/FUNZLE.git",
+    figmaUrl: "https://bit.ly/PROTO-FUNZLE",
+  },
+  {
+    name: "Dashboard",
+    role: "Full Stack Developer",
+    type: "team",
+    image: "/img/dwo.jpg",
+    desc: "An interactive OLAP dashboard for analyzing AdventureWorks business data across multiple dimensions, including products, customers, regions, and time, using visualizations to identify sales trends and business insights.",
+    tech: ["HTML", "CSS", "Javascript", "Bootstrap", "Apache Tomcat", "MySQL"],
+    githubUrl: "https://github.com/risdaah/Dashboard-Adventureworks-PAR-B.git"
+  },
+  {
+    name: "SIBOOK",
+    role: "Full Stack Developer",
+    type: "team",
+    image: "/img/sibook.jpg",
+    desc: "A desktop-based library management application for managing **book collections, member data, and borrowing and return transactions** to streamline library operations.",
+    tech: ["VB .NET", "MySQL"],
+    githubUrl: "https://github.com/Talia-Apr/SIBOOK.git"
+  },
+  {
+    name: "Faculty Profile",
+    role: "Front End Developer",
+    type: "team",
+    image: "/img/profilfakultas.jpg",
+    desc: "A mobile application that provides accessible information about FISIP UPN Veteran Jawa Timur, including faculty profiles, academic information, and study programs.",
+    tech: ["Flutter", "Dart"],
+    githubUrl: "https://github.com/risdaah/UTS-PEMMOB-KEL-17.git"
+  },
+  {
+    name: "KIDCARE",
+    role: "Front End Developer",
+    type: "team",
+    image: "/img/kidcare.jpg",
+    desc: "A mobile application that connects users with childcare providers, allowing them to find and book childcare services based on their preferred schedule and duration.",
+    tech: ["Flutter", "Dart"],
+    githubUrl: "https://github.com/Talia-Apr/kidcare.git",
+    figmaUrl: "https://bit.ly/kidcare-design",
+  },
+  {
+    name: "CAFENEA",
     role: "UI Design",
-    type: "final",
-    image: "/projects/teman-belajar.png",
-    desc: "Menata ulang dashboard kelas daring agar progres belajar, tugas, dan jadwal terlihat jelas dalam satu pandangan tanpa membuat pengguna kewalahan.",
+    type: "team",
+    image: "/img/cafenea.jpg",
+    desc: "A mobile UI/UX design for a cafe ordering application, featuring an intuitive menu interface and streamlined ordering flow for a convenient user experience.",
     tech: ["Figma", "Design System"],
-    githubUrl: "https://github.com/username/teman-belajar",
+    figmaUrl: "https://bit.ly/PROTO-CAFENEA",
+  },
+  {
+    name: "APASI",
+    role: "UI Design",
+    type: "team",
+    image: "/img/apasi.jpg",
+    desc: "A mobile application for SMKN 2 Buduran Sidoarjo that enables students to purchase cooperative products and access services provided by students based on their study programs and skills.",
+    tech: ["Figma", "Design System"],
+    liveUrl: "https://bit.ly/APASI-APP",
+    figmaUrl: "https://bit.ly/PROTO-APASI"
+  },
+  {
+    name: "WedOne",
+    role: "Full Stack Developer",
+    type: "final",
+    image: "/img/wedone.jpg",
+    desc: "A mobile application for browsing and renting wedding dresses, allowing users to explore available dresses and make rental bookings conveniently.",
+    tech: ["Android Studio", "MySQL", "Figma"],
+    githubUrl: "https://bit.ly/PROTO-WEDONE",
+    figmaUrl: "https://bit.ly/GIT-WEDONE",
   },
 ];
 
@@ -198,7 +278,7 @@ const ORGANIZATIONS = [
     logo: "/logo/ukm.png",
     points: [
       "Led digital communication and social media strategies",
-      "Directed content production aligned with organizational goals",
+      "Directed content production aligned with organizational goals"
     ],
   },
 ];
@@ -551,6 +631,20 @@ function AboutPane() {
   );
 }
 
+function EyeIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M12 5C6.24 5 1.5 9.5 0.5 12c1 2.5 5.74 7 11.5 7s10.5-4.5 11.5-7c-1-2.5-5.74-7-11.5-7Zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z"
+      />
+      <circle cx="12" cy="12" r="2" />
+    </svg>
+  );
+}
+ 
+
 function GithubIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -597,20 +691,28 @@ function ProjectPane() {
   return (
     <div className="space-y-4 text-[var(--ink-project)]">
       <h2 className="font-display font-bold text-2xl sm:text-3xl">Project</h2>
-      <div className="grid gap-5">
+      <div className="grid gap-5 md:grid-cols-2">
         {PROJECTS.map((p) => (
           <div
             key={p.name}
-            className="rounded-2xl bg-[var(--card-bg)] overflow-hidden shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md flex flex-col sm:flex-row"
+            className="rounded-2xl bg-[var(--card-bg)] overflow-hidden shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md flex flex-col"
           >
             {/* Thumbnail */}
-            <div className="relative w-full sm:w-64 md:w-72 flex-shrink-0 aspect-[16/10] sm:aspect-auto bg-[var(--chip-bg)]">
+            <div className="relative w-full aspect-[16/10] bg-[var(--chip-bg)]">
               <Image
                 src={p.image}
                 alt={`${p.name} preview`}
                 fill
-                sizes="(min-width: 640px) 18rem, 100vw"
+                sizes="(min-width: 768px) 50vw, 100vw"
                 className="object-cover"
+              />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(to top, var(--project-fade) 0%, transparent 60%)",
+                }}
               />
             </div>
 
@@ -660,8 +762,15 @@ function ProjectPane() {
               </ul>
 
               {/* Links */}
-              {(p.githubUrl || p.figmaUrl) && (
+               {(p.liveUrl || p.githubUrl || p.figmaUrl) && (
                 <div className="flex flex-wrap gap-2 mt-auto pt-1">
+                  {p.liveUrl && (
+                    <ProjectLink
+                      href={p.liveUrl}
+                      icon={<EyeIcon />}
+                      label="View"
+                    />
+                  )}
                   {p.githubUrl && (
                     <ProjectLink
                       href={p.githubUrl}

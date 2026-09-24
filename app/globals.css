@@ -27,6 +27,11 @@ body {
   --card-bg: rgba(255, 255, 255, 0.7);
   --shadow-folder-color: rgba(219, 39, 119, 0.4);
 
+  /* Project thumbnail fade: independent from --card-bg on purpose, so
+     the overlay always stays translucent and never hides the photo,
+     however --card-bg itself gets tuned later. */
+  --project-fade: rgba(255, 235, 240, 0.75);
+
   --tab-active-bg: #FFDBDB;
   --tab-shadow-active: 0 -4px 10px -6px rgba(0, 0, 0, 0.15);
   --tab-shadow-inactive: 0 -2px 6px -4px rgba(0, 0, 0, 0.12);
@@ -111,6 +116,11 @@ body {
   --tab-inactive-bg: #241f38;
   --card-bg: rgba(255, 255, 255, 0.06);
   --shadow-folder-color: rgba(236, 95, 153, 0.5);
+
+  /* Dark, translucent plum instead of --card-bg's very low alpha —
+     that alpha is fine for a card fill sitting on the folder gradient,
+     but too faint to read as a fade on top of a photo. */
+  --project-fade: rgba(25, 14, 24, 0.78);
 
   --tab-active-bg: #4a1e35;
   --tab-shadow-active: 0 -4px 10px -6px rgba(0, 0, 0, 0.6);
