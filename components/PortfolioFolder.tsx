@@ -193,44 +193,17 @@ const PROJECTS: Project[] = [
 const CONTACT_LINKS = [
   {
     label: "Email",
-    value: "talia.aprianti@email.com",
-    href: "mailto:talia.aprianti@email.com",
+    value: "taliaaprianti46@gmail.com",
+    href: "mailto:taliaaprianti46@gmail.com",
+    icon: MailIcon,
   },
   {
     label: "GitHub",
-    value: "github.com/username",
-    href: "https://github.com/username",
+    value: "github.com/Talia-Apr",
+    href: "https://github.com/Talia-Apr",
+    icon: GithubIconLarge,
   },
 ];
-
-// Guestbook: messages are posted to and read from an API route backed
-// by real storage, so they persist after the site is closed and are
-// visible to every visitor, not just the person who wrote them. See
-// app/api/messages/route.ts.
-const MESSAGES_API_URL = "/api/messages";
-const MAX_MESSAGE_LENGTH = 500;
-const MAX_NAME_LENGTH = 40;
-
-type GuestMessage = {
-  id: string;
-  name: string;
-  message: string;
-  createdAt: string;
-};
-
-function formatRelativeTime(iso: string): string {
-  const diffMs = Date.now() - new Date(iso).getTime();
-  const diffSec = Math.round(diffMs / 1000);
-  if (diffSec < 60) return "just now";
-  const diffMin = Math.round(diffSec / 60);
-  if (diffMin < 60) return `${diffMin}m ago`;
-  const diffHour = Math.round(diffMin / 60);
-  if (diffHour < 24) return `${diffHour}h ago`;
-  const diffDay = Math.round(diffHour / 24);
-  if (diffDay < 30) return `${diffDay}d ago`;
-  return new Date(iso).toLocaleDateString();
-}
-
 
 const CERTIFICATIONS = [
   {
@@ -664,6 +637,33 @@ function AboutPane() {
   );
 }
 
+function MailIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="2" y="4" width="20" height="16" rx="3" />
+      <path d="m3 7 8.4 6.3a1 1 0 0 0 1.2 0L21 7" />
+    </svg>
+  );
+}
+
+function GithubIconLarge() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 .5C5.73.5.98 5.24.98 11.52c0 5.02 3.26 9.28 7.78 10.78.57.1.78-.25.78-.55 0-.27-.01-1.16-.02-2.1-3.17.69-3.84-1.35-3.84-1.35-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.75 1.18 1.75 1.18 1.02 1.75 2.68 1.24 3.33.95.1-.74.4-1.24.73-1.53-2.53-.29-5.2-1.27-5.2-5.63 0-1.24.44-2.26 1.17-3.06-.12-.29-.51-1.45.11-3.02 0 0 .96-.31 3.14 1.17.91-.25 1.88-.38 2.85-.38.97 0 1.94.13 2.85.38 2.18-1.48 3.14-1.17 3.14-1.17.62 1.57.23 2.73.11 3.02.73.8 1.17 1.82 1.17 3.06 0 4.37-2.68 5.34-5.22 5.62.41.36.77 1.06.77 2.14 0 1.55-.01 2.79-.01 3.17 0 .3.2.66.79.55A11.03 11.03 0 0 0 23.02 11.5C23.02 5.24 18.27.5 12 .5Z" />
+    </svg>
+  );
+}
+
 function EyeIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -879,157 +879,39 @@ function CertificationPane() {
 }
 
 function ContactPane() {
-  const [messages, setMessages] = useState<GuestMessage[]>([]);
-  const [loadingMessages, setLoadingMessages] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-
-  const [name, setName] = useState("");
-  const [message, setMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch(MESSAGES_API_URL)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to load messages.");
-        return res.json();
-      })
-      .then((data: { messages?: GuestMessage[] }) => {
-        if (!cancelled) setMessages(data.messages ?? []);
-      })
-      .catch(() => {
-        if (!cancelled) setLoadError("Couldn't load messages right now.");
-      })
-      .finally(() => {
-        if (!cancelled) setLoadingMessages(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const trimmed = message.trim();
-    if (!trimmed || submitting) return;
-
-    setSubmitting(true);
-    setSubmitError(null);
-    try {
-      const res = await fetch(MESSAGES_API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, message: trimmed }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data?.error ?? "Failed to send message.");
-      }
-      setMessages((prev) => [data.message as GuestMessage, ...prev]);
-      setMessage("");
-    } catch (err) {
-      setSubmitError(
-        err instanceof Error ? err.message : "Failed to send message."
-      );
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
   return (
-    <div className="space-y-4 text-[var(--ink-contact)]">
-      <h2 className="font-display font-bold text-2xl sm:text-3xl">Contact</h2>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Left: how to reach me */}
-        <div className="space-y-3">
-          <p className="font-body leading-relaxed">
-            Got a project or collaboration in mind? Feel free to reach out, or
-            just leave a message on the right.
-          </p>
-          {CONTACT_LINKS.map((c) => (
+    <div className="h-full flex flex-col items-center justify-center text-center gap-6">
+      <h2 className="font-display font-bold text-2xl sm:text-3xl text-[var(--ink-contact)]">
+        Contact
+      </h2>
+      <p className="font-body leading-relaxed text-[var(--ink-contact)] max-w-sm">
+        Got a project or collaboration in mind? Feel free to reach out.
+      </p>
+      <div className="flex flex-col sm:flex-row gap-3">
+        {CONTACT_LINKS.map((c) => {
+          const Icon = c.icon;
+          return (
             <a
               key={c.label}
               href={c.href}
               target={c.href.startsWith("http") ? "_blank" : undefined}
               rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm flex items-center justify-between gap-3 transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
+              className="flex items-center gap-3 rounded-2xl bg-[var(--card-bg)] px-5 py-4 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
             >
-              <span className="font-body font-semibold text-sm text-[var(--accent-contact)]">
-                {c.label}
+              <span className="flex-shrink-0 text-[var(--accent-contact)]">
+                <Icon />
               </span>
-              <span className="font-body text-sm truncate">{c.value}</span>
+              <span className="text-left">
+                <span className="block font-body font-semibold text-sm text-[var(--accent-contact)]">
+                  {c.label}
+                </span>
+                <span className="block font-body text-sm text-[var(--ink-contact)]">
+                  {c.value}
+                </span>
+              </span>
             </a>
-          ))}
-        </div>
-
-        {/* Right: guestbook — send + read messages, stored server-side */}
-        <div className="space-y-3">
-          <form onSubmit={handleSubmit} className="space-y-2">
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your name (optional)"
-              maxLength={MAX_NAME_LENGTH}
-              className="w-full rounded-xl bg-[var(--card-bg)] px-3 py-2 font-body text-sm text-[var(--ink-contact)] placeholder:opacity-60 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-contact)]"
-            />
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Leave a message..."
-              maxLength={MAX_MESSAGE_LENGTH}
-              rows={3}
-              required
-              className="w-full rounded-xl bg-[var(--card-bg)] px-3 py-2 font-body text-sm text-[var(--ink-contact)] placeholder:opacity-60 shadow-sm resize-none focus:outline-none focus:ring-2 focus:ring-[var(--accent-contact)]"
-            />
-            <div className="flex items-center justify-between gap-3">
-              {submitError ? (
-                <p className="font-body text-xs text-red-500">{submitError}</p>
-              ) : (
-                <span />
-              )}
-              <button
-                type="submit"
-                disabled={submitting || !message.trim()}
-                className="rounded-full bg-[var(--btn-bg)] px-5 py-2 font-display font-bold text-sm text-[var(--btn-text)] shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md hover:bg-[var(--btn-bg-hover)] disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-sm disabled:cursor-not-allowed"
-              >
-                {submitting ? "Sending…" : "Send"}
-              </button>
-            </div>
-          </form>
-
-          <div className="folder-scroll space-y-2 max-h-64 overflow-y-auto pr-1">
-            {loadingMessages && (
-              <p className="font-body text-sm opacity-70">Loading messages…</p>
-            )}
-            {!loadingMessages && loadError && (
-              <p className="font-body text-sm text-red-500">{loadError}</p>
-            )}
-            {!loadingMessages && !loadError && messages.length === 0 && (
-              <p className="font-body text-sm opacity-70">
-                No messages yet — be the first to say hi!
-              </p>
-            )}
-            {messages.map((m) => (
-              <div
-                key={m.id}
-                className="rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <p className="font-display font-bold text-sm">{m.name}</p>
-                  <span className="font-body text-[11px] opacity-60 whitespace-nowrap">
-                    {formatRelativeTime(m.createdAt)}
-                  </span>
-                </div>
-                <p className="font-body text-sm mt-1 leading-relaxed whitespace-pre-wrap break-words">
-                  {m.message}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
+          );
+        })}
       </div>
     </div>
   );
