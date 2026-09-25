@@ -231,11 +231,44 @@ function formatRelativeTime(iso: string): string {
   return new Date(iso).toLocaleDateString();
 }
 
+
 const CERTIFICATIONS = [
-  { name: "Google UX Design Professional Certificate", year: "2024", issuer: "Google / Coursera" },
-  { name: "Fundamental Front-End Web Development", year: "2023", issuer: "Dicoding Indonesia" },
-  { name: "Design Thinking untuk Produk Digital", year: "2023", issuer: "Skilvul" },
-  { name: "Belajar Dasar Manajemen Proyek", year: "2022", issuer: "Dicoding Indonesia" },
+  {
+    name: "Intro to Software Engineering",
+    year: "2026",
+    issuer: "RevoU",
+    image: "/doc/revou.jpg",
+  },
+  {
+    name: "Junior Web Programmer",
+    year: "2025",
+    issuer: "Badan Nasional Sertifikasi Profesi (BNSP)",
+    image: "/doc/bnsp.jpg", 
+  },
+  {
+    name: "Work In Tech Indonesia",
+    year: "2023",
+    issuer: "Aguna Course",
+    image: "/doc/wit.jpg",
+  },
+  {
+    name: "IT Support Google",
+    year: "2023",
+    issuer: "Google / Coursera",
+    image: "/doc/it.jpg",
+  },
+  {
+    name: "Certification of Competency",
+    year: "2022",
+    issuer: "Asosiasi Pengusaha TIK Nasional (APTIKNAS)",
+    image: "/doc/aptiknas.jpg",
+  },
+  {
+    name: "Certification of Competency",
+    year: "2021",
+    issuer: "PT Awak Media (AMIGROUP)",
+    image: "/doc/amigroup.jpg",
+  },
 ];
 
 // ---- About tab content ------------------
@@ -799,21 +832,45 @@ function CertificationPane() {
   return (
     <div className="space-y-4 text-[var(--ink-cert)]">
       <h2 className="font-display font-bold text-2xl sm:text-3xl">Certification</h2>
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2">
         {CERTIFICATIONS.map((c) => (
           <div
             key={c.name}
-            className="flex items-center justify-between gap-3 rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
+            className="rounded-2xl bg-[var(--card-bg)] overflow-hidden shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md flex flex-col"
           >
-            <div>
-              <p className="font-display font-bold text-sm sm:text-base">{c.name}</p>
-              <p className="font-body text-xs sm:text-sm text-[var(--accent-cert)] font-semibold">
-                {c.issuer}
-              </p>
+            {/* Certificate image */}
+            <div className="relative w-full aspect-[16/10] bg-[var(--chip-bg)]">
+              <Image
+                src={c.image}
+                alt={`${c.name} certificate`}
+                fill
+                sizes="(min-width: 640px) 50vw, 100vw"
+                className="object-cover"
+              />
+              {/* Same fade-into-card treatment as the project thumbnails */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(to top, var(--project-fade) 0%, transparent 60%)",
+                }}
+              />
             </div>
-            <span className="font-body text-xs sm:text-sm font-semibold text-[var(--ink-cert)] whitespace-nowrap">
-              {c.year}
-            </span>
+
+            <div className="p-4 sm:p-5 flex items-start justify-between gap-3">
+              <div>
+                <p className="font-display font-bold text-sm sm:text-base">
+                  {c.name}
+                </p>
+                <p className="font-body text-xs sm:text-sm text-[var(--accent-cert)] font-semibold mt-1">
+                  {c.issuer}
+                </p>
+              </div>
+              <span className="font-body text-xs sm:text-sm font-semibold text-[var(--ink-cert)] whitespace-nowrap">
+                {c.year}
+              </span>
+            </div>
           </div>
         ))}
       </div>
