@@ -525,43 +525,6 @@ function AboutPane() {
         </section>
 
         <section>
-          <AboutSectionTitle>Internship Experience</AboutSectionTitle>
-          <ol className="space-y-3">
-            {INTERNSHIPS.map((i) => (
-              <li
-                key={i.company}
-                className="flex items-start gap-3 rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
-              >
-                <LogoBadge src={i.logo} alt={`${i.company} logo`} />
-                <div>
-                  <p className="font-display font-bold text-sm sm:text-base">
-                    {i.company}
-                  </p>
-                  <p className="font-body text-sm text-[var(--intro-body)]">
-                    {i.role}
-                  </p>
-                  <p className="font-body text-xs sm:text-sm font-semibold text-[var(--accent-about)] mt-1">
-                    {i.period}
-                  </p>
-                  {i.points && i.points.length > 0 && (
-                    <ul className="mt-2 space-y-1">
-                      {i.points.map((point) => (
-                        <li
-                          key={point}
-                          className="font-body text-xs sm:text-sm text-[var(--intro-body)] leading-relaxed pl-3.5 relative before:content-['•'] before:absolute before:left-0 before:text-[var(--accent-about)]"
-                        >
-                          {point}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section>
           <AboutSectionTitle>Organization Experience</AboutSectionTitle>
           <ol className="space-y-3">
             {ORGANIZATIONS.map((o) => (
@@ -583,6 +546,43 @@ function AboutPane() {
                   {o.points && o.points.length > 0 && (
                     <ul className="mt-2 space-y-1">
                       {o.points.map((point) => (
+                        <li
+                          key={point}
+                          className="font-body text-xs sm:text-sm text-[var(--intro-body)] leading-relaxed pl-3.5 relative before:content-['•'] before:absolute before:left-0 before:text-[var(--accent-about)]"
+                        >
+                          {point}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section>
+          <AboutSectionTitle>Internship Experience</AboutSectionTitle>
+          <ol className="space-y-3">
+            {INTERNSHIPS.map((i) => (
+              <li
+                key={i.company}
+                className="flex items-start gap-3 rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
+              >
+                <LogoBadge src={i.logo} alt={`${i.company} logo`} />
+                <div>
+                  <p className="font-display font-bold text-sm sm:text-base">
+                    {i.company}
+                  </p>
+                  <p className="font-body text-sm text-[var(--intro-body)]">
+                    {i.role}
+                  </p>
+                  <p className="font-body text-xs sm:text-sm font-semibold text-[var(--accent-about)] mt-1">
+                    {i.period}
+                  </p>
+                  {i.points && i.points.length > 0 && (
+                    <ul className="mt-2 space-y-1">
+                      {i.points.map((point) => (
                         <li
                           key={point}
                           className="font-body text-xs sm:text-sm text-[var(--intro-body)] leading-relaxed pl-3.5 relative before:content-['•'] before:absolute before:left-0 before:text-[var(--accent-about)]"
