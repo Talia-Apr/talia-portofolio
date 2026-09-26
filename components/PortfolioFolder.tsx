@@ -184,8 +184,8 @@ const INTERNSHIPS = [
     period: "Sep 2024 - Dec 2024",
     logo: "/logo/ok.jpg",
     points: [
-      "Developed responsive Point of Sales (POS) web interfaces using React.js, Tailwind CSS and Node.js",
-      "Integrated 4 core POS modules — Purchasing, Supplier, Customer, and User"
+      "Developed responsive POS interfaces using React.js and Tailwind CSS, implementing frontend features and Node.js REST APIs integrated with a MySQL database.",
+      "Integrated 4 core POS modules: Purchasing, Supplier, Customer, and User to support interconnected business workflows."
     ],
   },
 ];
@@ -378,7 +378,7 @@ function AboutPane() {
             Talia Aprianti
           </h2>
           <p className="font-body font-semibold text-[var(--intro-subtitle)]">
-            Software Developer · UI/UX Enthusiast
+            Web Developer · UI/UX Enthusiast
           </p>
           <p className="font-body leading-relaxed text-[var(--intro-body)]">
             I build clean, friendly, and easy-to-use digital products. I enjoy
