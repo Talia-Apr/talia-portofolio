@@ -24,7 +24,7 @@ const MIN_STRIP_WIDTH = "1800px";
 // Mascot logo. It sits above the waves and bobs gently up and down in
 // place — it does not slide sideways with the wave layers, it just
 // "rides" the motion the way something floating on water would.
-const LOGO_SRC = "/talogo.png";
+const LOGO_SRC = "/logo/talogo.png";
 
 function WaveStrip({
   id,

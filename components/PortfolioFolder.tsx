@@ -246,7 +246,7 @@ const CERTIFICATIONS = [
 
 // ---- About tab content ------------------
 const PROFILE_PHOTO = "/img/talia.png"; 
-const CV_URL = "/doc/cv.pdf"; 
+const CV_URL = "/doc/cv-talia.pdf"; 
 
 const EDUCATION = [
   {
