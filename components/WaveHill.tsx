@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { playClick, playHover } from "../lib/sfx";
+import { playPop, playHover } from "../lib/sfx";
 
 // Decorative wave hill anchored to the bottom of the viewport. Two
 // strips slide left forever at different speeds/opacities for a bit of
@@ -121,7 +121,7 @@ function TaLogo() {
   const faceSrc = showBubble ? LOGO_SMILE_SRC : blink ? LOGO_SLEEP_SRC : LOGO_SRC;
 
   function handleClick() {
-    playClick();
+    playPop();
 
     if (clicks.current === 0) {
       setMessage(LOGO_FIRST_LINE);

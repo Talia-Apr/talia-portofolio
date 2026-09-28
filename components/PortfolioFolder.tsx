@@ -318,7 +318,7 @@ export default function PortfolioFolder() {
  
   return (
     <div
-      className="w-full max-w-4xl select-none"
+      className="relative -top-10 sm:top-0 w-full max-w-4xl select-none"
       onPointerOver={(e) => {
         // Hover sound: only for a real mouse, and only when the pointer
         // ENTERS a card/pill (not when moving between its children).

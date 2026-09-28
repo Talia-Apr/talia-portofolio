@@ -4,7 +4,8 @@
 // Audio API, so there are no audio files to download or host.
 //
 //   playHover()   soft, high "tick"      -> hovering cards / pills / tabs
-//   playClick()   round "pop"            -> clicking tabs, buttons, links
+//   playClick()   crisp "click"          -> clicking tabs, buttons, links
+//   playPop()     round "pop"            -> clicking the mascot logo
 //   playToggle()  two-note retro "blip"  -> theme toggle & sound toggle
 //                 (rising when turned on, falling when turned off)
 //
@@ -104,6 +105,42 @@ function play(tones: Tone[]) {
   }
 }
 
+type NoiseBurst = {
+  freq: number; // center of the band that gets through (Hz)
+  q?: number; // how narrow that band is (higher = narrower)
+  start?: number;
+  dur: number;
+  gain?: number;
+};
+
+// A tiny burst of filtered white noise. Tones can't make a real
+// "click" — a click is a sharp transient, which is noise, not a pitch.
+function playNoise(bursts: NoiseBurst[]) {
+  if (!getSfxEnabled()) return;
+  const c = getCtx();
+  if (!c) return;
+  const t0 = c.currentTime;
+  for (const b of bursts) {
+    const s = t0 + (b.start ?? 0);
+    const len = Math.max(1, Math.floor(c.sampleRate * b.dur));
+    const buffer = c.createBuffer(1, len, c.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+    const src = c.createBufferSource();
+    src.buffer = buffer;
+    const filter = c.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.value = b.freq;
+    filter.Q.value = b.q ?? 0.9;
+    const g = c.createGain();
+    g.gain.setValueAtTime(b.gain ?? 0.15, s); // instant attack = the "snap"
+    g.gain.exponentialRampToValueAtTime(0.0001, s + b.dur);
+    src.connect(filter).connect(g).connect(c.destination);
+    src.start(s);
+    src.stop(s + b.dur + 0.01);
+  }
+}
+
 export function playHover() {
   const now = Date.now();
   if (now - lastHover < 70) return; // don't machine-gun while sweeping the mouse
@@ -112,9 +149,21 @@ export function playHover() {
 }
 
 export function playClick() {
+  // A crisp, short "tik": a ~20ms burst of high-passed noise for the
+  // snap, plus a barely-there sine for a little body. No low thump.
+  playNoise([{ freq: 3500, q: 0.8, dur: 0.02, gain: 0.12 }]);
+  play([{ freq: 1600, endFreq: 900, dur: 0.02, type: "sine", gain: 0.035 }]);
+}
+
+// Round, bubbly "pop" for the mascot logo: a sine that drops fast in
+// pitch (that falling glide is what reads as a pop), a quicker, higher
+// overtone on top for sparkle, and a tiny puff of noise at the very
+// start for the "p" of the pop.
+export function playPop() {
+  playNoise([{ freq: 1800, q: 0.7, dur: 0.012, gain: 0.05 }]);
   play([
-    { freq: 540, endFreq: 240, dur: 0.1, type: "triangle", gain: 0.13 },
-    { freq: 1100, endFreq: 800, dur: 0.05, type: "sine", gain: 0.04 },
+    { freq: 720, endFreq: 190, dur: 0.11, type: "sine", gain: 0.12 },
+    { freq: 1500, endFreq: 520, dur: 0.05, type: "sine", gain: 0.035 },
   ]);
 }
 
