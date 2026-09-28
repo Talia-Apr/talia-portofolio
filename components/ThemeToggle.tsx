@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   Sun, Moon
 } from 'lucide-react'
+import { playToggle } from "../lib/sfx";
 
 /**
  * Small floating button that flips the site between light and dark mode.
@@ -25,6 +26,7 @@ export default function ThemeToggle() {
   function toggleTheme() {
     const next = !isDark;
     setIsDark(next);
+    playToggle(next); // rising blip for dark, falling for light
     document.documentElement.classList.toggle("dark", next);
     try {
       window.localStorage.setItem("talia-theme", next ? "dark" : "light");

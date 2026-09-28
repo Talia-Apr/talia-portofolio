@@ -5,6 +5,20 @@
 html,
 body {
   height: 100%;
+  /* The page itself never scrolls — only the folder's inner page does.
+     Stops the whole screen from scrolling on phones. */
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* On phones, 100vh is taller than the visible area (the browser's
+   address bar takes space), which is what made the page scroll.
+   dvh follows the real visible height instead. */
+@supports (height: 100dvh) {
+  html,
+  body {
+    height: 100dvh;
+  }
 }
 
 /* ---- Theme tokens ---------------------------------------------------- */
@@ -98,6 +112,10 @@ body {
   /* Mascot logo riding the wave: plain white, no glow, in light mode */
   --logo-color: #ffffff;
   --logo-glow: none;
+
+  /* Speech bubble that pops up when the logo is clicked */
+  --bubble-bg: #ffffff;
+  --bubble-text: #7a0f3d;
 }
 
 /* Dark mode overrides */
@@ -176,6 +194,9 @@ body {
   --wave-bottom: #16301f;
 
   /* Mascot logo glows warm yellow in dark mode */
+  --bubble-bg: #35132a;
+  --bubble-text: #ffe066;
+
   --logo-color: #ffe066;
   --logo-glow: drop-shadow(0 0 4px rgba(255, 224, 102, 0.95))
     drop-shadow(0 0 14px rgba(255, 210, 60, 0.9))
@@ -233,62 +254,6 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .wave-layer {
     animation: none;
-  }
-}
-
-/* Solid backdrop behind the folder */
-.candy-backdrop {
-  background-color: var(--backdrop-color);
-  transition: background-color 0.4s ease;
-}
-
-/* Lace petals: each is a small circle (see LaceStrip in Backdrop.tsx)
-   that grows and shrinks on its own timer, so the row reads as an
-   alternating "some big, some small" ripple. */
-.lace-petal {
-  background: var(--lace-fill);
-  filter: drop-shadow(0 1px 2px var(--lace-shadow));
-  animation-name: lace-breathe;
-  animation-duration: 4.5s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-}
-@keyframes lace-breathe {
-  0%,
-  100% {
-    transform: scale(0.9);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .lace-petal {
-    animation: none;
-  }
-}
-
-/* Twinkling stars & dots scattered across the backdrop */
-@keyframes twinkle {
-  0%,
-  100% {
-    opacity: 0.25;
-    transform: scale(0.7);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.15);
-  }
-}
-.twinkle {
-  animation-name: twinkle;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .twinkle {
-    animation: none;
-    opacity: 0.85;
   }
 }
 

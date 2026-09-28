@@ -3,6 +3,7 @@
 
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import Image from "next/image";
+import { playClick, playHover } from "../lib/sfx";
 
 type SectionId = "about" | "project" | "certification" | "contact";
 
@@ -135,7 +136,7 @@ const PROJECTS: Project[] = [
     role: "Full Stack Developer",
     type: "team",
     image: "/img/sibook.jpg",
-    desc: "A desktop-based library management application for managing **book collections, member data, and borrowing and return transactions** to streamline library operations.",
+    desc: "A desktop-based library management application for managing book collections, member data, and borrowing and return transactions to streamline library operations.",
     tech: ["VB .NET", "MySQL"],
     githubUrl: "https://github.com/Talia-Apr/SIBOOK.git"
   },
@@ -306,7 +307,7 @@ const LANGUAGES = [
 
 export default function PortfolioFolder() {
   const [active, setActive] = useState<SectionId | null>(null);
-
+ 
   const current = SECTIONS.find((s) => s.id === active) ?? null;
   // The folder body always shows the same pink gradient — which tab is
   // open is shown by the tab itself (raised + a stronger shadow), not
@@ -314,9 +315,26 @@ export default function PortfolioFolder() {
   const folderGradient = current
     ? "var(--tab-active-bg)"
     : "linear-gradient(180deg, var(--folder-grad-top), var(--folder-grad-bottom))";
-
+ 
   return (
-    <div className="w-full max-w-4xl select-none">
+    <div
+      className="w-full max-w-4xl select-none"
+      onPointerOver={(e) => {
+        // Hover sound: only for a real mouse, and only when the pointer
+        // ENTERS a card/pill (not when moving between its children).
+        if (e.pointerType !== "mouse") return;
+        const el = (e.target as HTMLElement).closest('[data-sfx="hover"]');
+        if (!el) return;
+        const from = e.relatedTarget as Node | null;
+        if (from && el.contains(from)) return;
+        playHover();
+      }}
+      onClick={(e) => {
+        // Click sound for any button or link inside the folder (nav tabs,
+        // back-to-intro tab, CV / project / contact links).
+        if ((e.target as HTMLElement).closest("button, a")) playClick();
+      }}
+    >
       {/* Tab row: name tab (decorative) + nav tabs. Stays in one row at
           every width — tabs shrink first, and if they still don't fit,
           the nav strip scrolls sideways instead of wrapping under. */}
@@ -343,7 +361,7 @@ export default function PortfolioFolder() {
             <span className="hidden sm:inline">Portofolio Talia Aprianti</span>
           </span>
         </button>
-
+ 
         {/* Nav tabs */}
         <nav className="no-scrollbar flex items-end flex-nowrap overflow-x-auto min-w-0">
           {SECTIONS.map((section) => {
@@ -353,7 +371,7 @@ export default function PortfolioFolder() {
                 key={section.id}
                 onClick={() => setActive(isActive ? null : section.id)}
                 aria-pressed={isActive}
-                className="relative -mb-px flex-shrink-0 h-9 sm:h-12 md:h-16 px-2.5 sm:px-4 md:px-6 rounded-t-lg sm:rounded-t-xl font-display font-bold text-[11px] sm:text-sm md:text-lg whitespace-nowrap transition-all duration-300 hover:scale-105"
+                className="relative -mb-px flex-shrink-0 h-9 sm:h-12 md:h-16 px-2.5 sm:px-4 md:px-6 rounded-t-lg sm:rounded-t-xl font-display font-bold text-[11px] sm:text-sm md:text-lg whitespace-nowrap transition-all duration-300 hover:scale-105" data-sfx="hover"
                 style={{
                   backgroundColor: isActive ? "var(--tab-active-bg)" : section.wash,
                   color: isActive ? "var(--ink-strong)" : section.tabText,
@@ -368,13 +386,13 @@ export default function PortfolioFolder() {
           })}
         </nav>
       </div>
-
+ 
       {/* Folder body */}
       <div
         className="relative rounded-b-3xl rounded-tr-3xl shadow-folder overflow-hidden"
         style={{ background: folderGradient }}
       >
-        <div className="folder-scroll h-[60vh] sm:h-[65vh] overflow-y-auto px-4 py-6 sm:px-8 sm:py-10 md:px-12 md:py-12">
+        <div className="folder-scroll h-[60vh] sm:h-[65vh] supports-[height:100dvh]:h-[60dvh] supports-[height:100dvh]:sm:h-[65dvh] overflow-y-auto px-4 py-6 sm:px-8 sm:py-10 md:px-12 md:py-12">
           {!current && <IntroPane />}
           {current?.id === "about" && <AboutPane />}
           {current?.id === "project" && <ProjectPane />}
@@ -442,7 +460,7 @@ function AboutPane() {
       <div className="grid gap-6 md:grid-cols-[220px_1fr] md:gap-8 items-center">
         {/* Photo frame */}
         <div className="mx-auto w-44 sm:w-52 md:w-full">
-          <div className="rounded-[20px] border-4 border-[var(--frame-border)] bg-[var(--card-bg)] shadow-[0_10px_24px_-8px_var(--frame-shadow)] overflow-hidden transition-transform duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_16px_30px_-8px_var(--frame-shadow)]">
+          <div className="rounded-[20px] border-4 border-[var(--frame-border)] bg-[var(--card-bg)] shadow-[0_10px_24px_-8px_var(--frame-shadow)] overflow-hidden transition-transform duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_16px_30px_-8px_var(--frame-shadow)]" data-sfx="hover">
             <div className="relative aspect-[4/5] w-full">
               <Image
                 src={PROFILE_PHOTO}
@@ -454,7 +472,7 @@ function AboutPane() {
             </div>
           </div>
         </div>
-
+ 
         {/* Name, description, CV button */}
         <div className="text-center md:text-left space-y-3">
           <p className="font-body text-sm sm:text-base font-semibold text-[var(--intro-subtitle)]">
@@ -475,7 +493,7 @@ function AboutPane() {
           <a
             href={CV_URL}
             download
-            className="inline-flex items-center gap-2 rounded-full bg-[var(--btn-bg)] px-5 py-2.5 font-display font-bold text-sm sm:text-base text-[var(--btn-text)] shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md hover:bg-[var(--btn-bg-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--btn-bg)]"
+            className="inline-flex items-center gap-2 rounded-full bg-[var(--btn-bg)] px-5 py-2.5 font-display font-bold text-sm sm:text-base text-[var(--btn-text)] shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md hover:bg-[var(--btn-bg-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--btn-bg)]" data-sfx="hover"
           >
             <svg
               width="18"
@@ -496,16 +514,16 @@ function AboutPane() {
           </a>
         </div>
       </div>
-
+ 
       {/* Education + Internship + Organization */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-3">
         <section>
           <AboutSectionTitle>Education</AboutSectionTitle>
           <ol className="space-y-3">
             {EDUCATION.map((e) => (
               <li
                 key={e.school}
-                className="flex items-start gap-3 rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
+                className="flex items-start gap-3 rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md" data-sfx="hover"
               >
                 <LogoBadge src={e.logo} alt={`${e.school} logo`} />
                 <div>
@@ -523,51 +541,14 @@ function AboutPane() {
             ))}
           </ol>
         </section>
-
-        <section>
-          <AboutSectionTitle>Organization Experience</AboutSectionTitle>
-          <ol className="space-y-3">
-            {ORGANIZATIONS.map((o) => (
-              <li
-                key={o.name}
-                className="flex items-start gap-3 rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
-              >
-                <LogoBadge src={o.logo} alt={`${o.name} logo`} />
-                <div>
-                  <p className="font-display font-bold text-sm sm:text-base">
-                    {o.name}
-                  </p>
-                  <p className="font-body text-sm text-[var(--intro-body)]">
-                    {o.role}
-                  </p>
-                  <p className="font-body text-xs sm:text-sm font-semibold text-[var(--accent-about)] mt-1">
-                    {o.period}
-                  </p>
-                  {o.points && o.points.length > 0 && (
-                    <ul className="mt-2 space-y-1">
-                      {o.points.map((point) => (
-                        <li
-                          key={point}
-                          className="font-body text-xs sm:text-sm text-[var(--intro-body)] leading-relaxed pl-3.5 relative before:content-['•'] before:absolute before:left-0 before:text-[var(--accent-about)]"
-                        >
-                          {point}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ol>
-        </section>
-
+ 
         <section>
           <AboutSectionTitle>Internship Experience</AboutSectionTitle>
           <ol className="space-y-3">
             {INTERNSHIPS.map((i) => (
               <li
                 key={i.company}
-                className="flex items-start gap-3 rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
+                className="flex items-start gap-3 rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md" data-sfx="hover"
               >
                 <LogoBadge src={i.logo} alt={`${i.company} logo`} />
                 <div>
@@ -597,8 +578,45 @@ function AboutPane() {
             ))}
           </ol>
         </section>
+ 
+        <section>
+          <AboutSectionTitle>Organization Experience</AboutSectionTitle>
+          <ol className="space-y-3">
+            {ORGANIZATIONS.map((o) => (
+              <li
+                key={o.name}
+                className="flex items-start gap-3 rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md" data-sfx="hover"
+              >
+                <LogoBadge src={o.logo} alt={`${o.name} logo`} />
+                <div>
+                  <p className="font-display font-bold text-sm sm:text-base">
+                    {o.name}
+                  </p>
+                  <p className="font-body text-sm text-[var(--intro-body)]">
+                    {o.role}
+                  </p>
+                  <p className="font-body text-xs sm:text-sm font-semibold text-[var(--accent-about)] mt-1">
+                    {o.period}
+                  </p>
+                  {o.points && o.points.length > 0 && (
+                    <ul className="mt-2 space-y-1">
+                      {o.points.map((point) => (
+                        <li
+                          key={point}
+                          className="font-body text-xs sm:text-sm text-[var(--intro-body)] leading-relaxed pl-3.5 relative before:content-['•'] before:absolute before:left-0 before:text-[var(--accent-about)]"
+                        >
+                          {point}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
       </div>
-
+ 
       {/* Tech stack */}
       <section>
         <AboutSectionTitle>Tech Stack</AboutSectionTitle>
@@ -606,14 +624,14 @@ function AboutPane() {
           {TECH_STACK.map((t) => (
             <li
               key={t}
-              className="rounded-xl bg-[var(--card-bg)] px-3 py-2 font-body font-semibold text-sm text-[var(--intro-title)] shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md cursor-default"
+              className="rounded-xl bg-[var(--card-bg)] px-3 py-2 font-body font-semibold text-sm text-[var(--intro-title)] shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md cursor-default" data-sfx="hover"
             >
               {t}
             </li>
           ))}
         </ul>
       </section>
-
+ 
       {/* Languages */}
       <section>
         <AboutSectionTitle>Languages</AboutSectionTitle>
@@ -621,7 +639,7 @@ function AboutPane() {
           {LANGUAGES.map((l) => (
             <li
               key={l.name}
-              className="rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
+              className="rounded-2xl bg-[var(--card-bg)] px-4 py-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md" data-sfx="hover"
             >
               <p className="font-display font-bold text-sm sm:text-base">
                 {l.name}
@@ -712,7 +730,7 @@ function ProjectLink({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1.5 rounded-full bg-[var(--link-btn-bg)] px-3 py-1.5 font-body text-xs sm:text-sm font-semibold text-[var(--link-btn-text)] transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md hover:bg-[var(--link-btn-bg-hover)]"
+      className="inline-flex items-center gap-1.5 rounded-full bg-[var(--link-btn-bg)] px-3 py-1.5 font-body text-xs sm:text-sm font-semibold text-[var(--link-btn-text)] transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md hover:bg-[var(--link-btn-bg-hover)]" data-sfx="hover"
     >
       {icon}
       {label}
@@ -728,7 +746,7 @@ function ProjectPane() {
         {PROJECTS.map((p) => (
           <div
             key={p.name}
-            className="rounded-2xl bg-[var(--card-bg)] overflow-hidden shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md flex flex-col"
+            className="rounded-2xl bg-[var(--card-bg)] overflow-hidden shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md flex flex-col" data-sfx="hover"
           >
             {/* Thumbnail */}
             <div className="relative w-full aspect-[16/10] bg-[var(--chip-bg)]">
@@ -739,6 +757,10 @@ function ProjectPane() {
                 sizes="(min-width: 768px) 50vw, 100vw"
                 className="object-cover"
               />
+              {/* Fade overlay: same color as the card body, 100% opacity
+                  where it meets the text below, fading to fully
+                  transparent toward the top of the photo — so the image
+                  blends into the card instead of ending with a hard edge. */}
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0"
@@ -748,7 +770,7 @@ function ProjectPane() {
                 }}
               />
             </div>
-
+ 
             <div className="p-4 sm:p-5 flex flex-col gap-3 flex-1">
               {/* Type badge + role */}
               <div className="flex items-center gap-2 flex-wrap">
@@ -771,7 +793,7 @@ function ProjectPane() {
                   {p.role}
                 </span>
               </div>
-
+ 
               {/* Title + description */}
               <div>
                 <p className="font-display font-bold text-base sm:text-lg">
@@ -781,7 +803,7 @@ function ProjectPane() {
                   {p.desc}
                 </p>
               </div>
-
+ 
               {/* Tech chips */}
               <ul className="flex flex-wrap gap-1.5">
                 {p.tech.map((t) => (
@@ -793,9 +815,9 @@ function ProjectPane() {
                   </li>
                 ))}
               </ul>
-
+ 
               {/* Links */}
-               {(p.liveUrl || p.githubUrl || p.figmaUrl) && (
+              {(p.liveUrl || p.githubUrl || p.figmaUrl) && (
                 <div className="flex flex-wrap gap-2 mt-auto pt-1">
                   {p.liveUrl && (
                     <ProjectLink
@@ -836,7 +858,7 @@ function CertificationPane() {
         {CERTIFICATIONS.map((c) => (
           <div
             key={c.name}
-            className="rounded-2xl bg-[var(--card-bg)] overflow-hidden shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md flex flex-col"
+            className="rounded-2xl bg-[var(--card-bg)] overflow-hidden shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md flex flex-col" data-sfx="hover"
           >
             {/* Certificate image */}
             <div className="relative w-full aspect-[16/10] bg-[var(--chip-bg)]">
@@ -857,7 +879,7 @@ function CertificationPane() {
                 }}
               />
             </div>
-
+ 
             <div className="p-4 sm:p-5 flex items-start justify-between gap-3">
               <div>
                 <p className="font-display font-bold text-sm sm:text-base">
@@ -896,7 +918,7 @@ function ContactPane() {
               href={c.href}
               target={c.href.startsWith("http") ? "_blank" : undefined}
               rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="flex items-center gap-3 rounded-2xl bg-[var(--card-bg)] px-5 py-4 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
+              className="flex items-center gap-3 rounded-2xl bg-[var(--card-bg)] px-5 py-4 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md" data-sfx="hover"
             >
               <span className="flex-shrink-0 text-[var(--accent-contact)]">
                 <Icon />

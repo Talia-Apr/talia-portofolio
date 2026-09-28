@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Baloo_2, Quicksand } from "next/font/google";
 import "./globals.css";
 import ThemeToggle from "@/components/ThemeToggle";
-// import SoundToggle from "@/components/SoundToggle";
+import SoundToggle from "@/components/SoundToggle";
 
 const baloo = Baloo_2({
   subsets: ["latin"],
@@ -51,7 +51,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <ThemeToggle />
-        {/* <SoundToggle /> */}
+        <SoundToggle />
         {children}
       </body>
     </html>
