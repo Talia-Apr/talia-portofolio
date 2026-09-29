@@ -22,6 +22,27 @@ export const metadata: Metadata = {
   icons: {
     icon: "/logo/talogo.png",
   },
+  openGraph: {
+    title: "Portofolio Talia Aprianti",
+    description: "Hi, I'm Talia! Web Developer — check out my projects.",
+    url: "/",
+    siteName: "Talia Aprianti",
+    type: "website",
+    images: [
+      {
+        url: "/img/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Portofolio Talia Aprianti",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Portofolio Talia Aprianti",
+    description: "Hi, I'm Talia! Web Developer — check out my projects.",
+    images: ["/img/og.png"],
+  },
 };
 
 // Runs before the page paints, so the correct theme (saved choice, or the
