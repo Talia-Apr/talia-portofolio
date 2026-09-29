@@ -79,7 +79,7 @@ const LOGO_LINES = [
   "I'm stand for TA",
   "Have you eaten yet?",
   "Wanna chat? She's free!",
-  "Accept her pls..",
+  "Hire her pls..",
   "Just floating",
   "Let's do some fun!",
   "Coffee? ☕ Please?",
