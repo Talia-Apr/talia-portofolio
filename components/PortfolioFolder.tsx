@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import Image from "next/image";
 import { playClick, playHover } from "../lib/sfx";
 
@@ -43,7 +42,7 @@ const SECTIONS: Section[] = [
   },
   {
     id: "contact",
-    label: "contact",
+    label: "more",
     accent: "var(--accent-contact)",
     wash: "var(--wash-contact)",
     tabText: "var(--tab-text-contact)",
@@ -52,7 +51,7 @@ const SECTIONS: Section[] = [
 
 const RESTING_COLOR = "var(--folder-resting)";
 
-type ProjectType = "team" | "final";
+type ProjectType = "team" | "final" | "personal";
 
 type Project = {
   name: string;
@@ -69,9 +68,20 @@ type Project = {
 const PROJECT_TYPE_LABEL: Record<ProjectType, string> = {
   team: "Team Project",
   final: "Final Project",
+  personal:"Personal Project"
 };
 
 const PROJECTS: Project[] = [
+  {
+    name: "Operational Report Analyzer",
+    role: "Full Stack Developer",
+    type: "personal",
+    image: "/img/report.jpg",
+    desc: "A simple AI-powered Web Application that transforms unstructured operational reports into structured insights using an Groq API.",
+    tech: ["Next.js", "Tailwind CSS", "Groq API"],
+    liveUrl: "https://ops-report-analyzer.vercel.app/",
+    githubUrl: "https://github.com/Talia-Apr/report-analyzer.git",
+  },
   {
     name: "Workshop Service Management",
     role: "Full Stack Developer",
@@ -208,28 +218,10 @@ const CONTACT_LINKS = [
 
 const CERTIFICATIONS = [
   {
-    name: "Intro to Software Engineering",
-    year: "2026",
-    issuer: "RevoU",
-    image: "/doc/revou.jpg",
-  },
-  {
     name: "Junior Web Programmer",
     year: "2025",
     issuer: "Badan Nasional Sertifikasi Profesi (BNSP)",
     image: "/doc/bnsp.jpg", 
-  },
-  {
-    name: "Work In Tech Indonesia",
-    year: "2023",
-    issuer: "Aguna Course",
-    image: "/doc/wit.jpg",
-  },
-  {
-    name: "IT Support Google",
-    year: "2023",
-    issuer: "Google / Coursera",
-    image: "/doc/it.jpg",
   },
   {
     name: "Certification of Competency",
@@ -318,7 +310,7 @@ export default function PortfolioFolder() {
  
   return (
     <div
-      className="relative -top-10 sm:top-0 w-full max-w-4xl select-none"
+      className="w-full max-w-4xl select-none"
       onPointerOver={(e) => {
         // Hover sound: only for a real mouse, and only when the pointer
         // ENTERS a card/pill (not when moving between its children).
@@ -780,11 +772,15 @@ function ProjectPane() {
                     backgroundColor:
                       p.type === "team"
                         ? "var(--badge-team-bg)"
-                        : "var(--badge-final-bg)",
+                        : p.type === "final"
+                          ? "var(--badge-final-bg)"
+                          : "var(--badge-personal-bg)",
                     color:
                       p.type === "team"
                         ? "var(--badge-team-text)"
-                        : "var(--badge-final-text)",
+                        : p.type === "final"
+                          ? "var(--badge-final-text)"
+                          : "var(--badge-personal-text)",
                   }}
                 >
                   {PROJECT_TYPE_LABEL[p.type]}
@@ -900,41 +896,676 @@ function CertificationPane() {
   );
 }
 
+// ---- Contact tab: email / GitHub on the left, "ask about Talia" bot on the right
 function ContactPane() {
   return (
-    <div className="h-full flex flex-col items-center justify-center text-center gap-6">
-      <h2 className="font-display font-bold text-2xl sm:text-3xl text-[var(--ink-contact)]">
-        Contact
-      </h2>
-      <p className="font-body leading-relaxed text-[var(--ink-contact)] max-w-sm">
-        Got a project or collaboration in mind? Feel free to reach out.
-      </p>
-      <div className="flex flex-col sm:flex-row gap-3">
-        {CONTACT_LINKS.map((c) => {
-          const Icon = c.icon;
-          return (
-            <a
-              key={c.label}
-              href={c.href}
-              target={c.href.startsWith("http") ? "_blank" : undefined}
-              rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="flex items-center gap-3 rounded-2xl bg-[var(--card-bg)] px-5 py-4 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md" data-sfx="hover"
-            >
-              <span className="flex-shrink-0 text-[var(--accent-contact)]">
-                <Icon />
-              </span>
-              <span className="text-left">
-                <span className="block font-body font-semibold text-sm text-[var(--accent-contact)]">
-                  {c.label}
+    // h-full = exactly the folder's inner height, so nothing needs scrolling.
+    // Phone: links in a compact row, chat takes whatever height is left.
+    // Desktop: two columns, both as tall as the folder.
+    <div className="grid h-full min-h-[21rem] grid-rows-[auto_minmax(0,1fr)] gap-3 text-[var(--ink-contact)] md:min-h-[17rem] md:grid-cols-2 md:grid-rows-[minmax(0,1fr)] md:gap-6">
+      {/* Left: heading + email / GitHub */}
+      <div className="flex min-h-0 flex-col gap-2 md:gap-4">
+        <div className="text-center md:text-left">
+          {/* hidden on very short phone screens: the tab already says "contact" */}
+          <h2 className="font-display font-bold text-xl sm:text-3xl [@media(max-height:660px)]:max-md:hidden">
+            Contact
+          </h2>
+          <p className="mt-2 hidden font-body leading-relaxed md:block">
+            Got a project or collaboration in mind? Feel free to reach out.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-2 md:flex md:min-h-0 md:flex-1 md:flex-col md:gap-3">
+          {CONTACT_LINKS.map((c) => {
+            const Icon = c.icon;
+            return (
+              <a
+                key={c.label}
+                href={c.href}
+                target={c.href.startsWith("http") ? "_blank" : undefined}
+                rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                className="flex min-w-0 items-center gap-2 rounded-2xl bg-[var(--card-bg)] px-3 py-2.5 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md md:flex-1 md:gap-3 md:px-5 md:py-4" data-sfx="hover"
+              >
+                <span className="flex-shrink-0 text-[var(--accent-contact)]">
+                  <Icon />
                 </span>
-                <span className="block font-body text-sm text-[var(--ink-contact)]">
-                  {c.value}
+                <span className="min-w-0 text-left">
+                  <span className="block font-body text-xs font-semibold text-[var(--accent-contact)] md:text-sm">
+                    {c.label}
+                  </span>
+                  <span className="block break-all font-body text-xs text-[var(--ink-contact)] md:break-words md:text-sm">
+                    {c.value}
+                  </span>
                 </span>
-              </span>
-            </a>
-          );
-        })}
+              </a>
+            );
+          })}
+        </div>
       </div>
+
+      {/* Right: chatbot */}
+      <ChatPanel />
     </div>
   );
+}
+
+function GhostIcon() {
+  return (
+    <svg width="20" height="22" viewBox="0 0 100 118" fill="currentColor" aria-hidden="true">
+      <path
+        fillRule="evenodd"
+        d="M50 4C27 4 10 22 10 46v50c0 4 4.5 6 7.5 3.2l7-6.5 7 6.5c2 1.9 5 1.9 7 0l7-6.5 7 6.5c2 1.9 5 1.9 7 0l7-6.5 7 6.5c3 2.8 7.5.8 7.5-3.2V46C90 22 73 4 50 4ZM33 46a5 7 0 1 0 10 0 5 7 0 1 0-10 0ZM57 52a5 7 0 1 0 10 0 5 7 0 1 0-10 0Z"
+      />
+    </svg>
+  );
+}
+
+function SendIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M22 2 11 13" />
+      <path d="M22 2 15 22l-4-9-9-4 20-7Z" />
+    </svg>
+  );
+}
+
+type ChatMessage = { id: number; from: "bot" | "user" } & BotReply;
+
+// Quick questions shown as chips under the conversation.
+const SUGGESTIONS = [
+  { label: "Tech stack", question: "What's her tech stack?" },
+  { label: "Projects", question: "What projects has she built?" },
+  { label: "Certifications", question: "What certifications does she have?" },
+  { label: "Education", question: "Where did she study?" },
+  { label: "Experience", question: "What's her work experience?" },
+  { label: "Contact", question: "How can I contact her?" },
+];
+
+function ChatLink({ link }: { link: BotLink }) {
+  const external = link.href.startsWith("http");
+  return (
+    <a
+      href={link.href}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
+      download={link.download ? true : undefined}
+      className="inline-flex items-center rounded-full bg-[var(--link-btn-bg)] px-3 py-1.5 font-body text-xs font-semibold text-[var(--link-btn-text)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[var(--link-btn-bg-hover)]" data-sfx="hover"
+    >
+      {link.label}
+    </a>
+  );
+}
+
+function ChatPanel() {
+  const nextId = useRef(1);
+  const listRef = useRef<HTMLDivElement>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { id: 0, from: "bot", text: BOT_GREETING },
+  ]);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+
+  // Keep the newest message in view (scrolls the chat box only, not the page).
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    if (typeof el.scrollTo === "function") {
+      el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    } else {
+      el.scrollTop = el.scrollHeight;
+    }
+  }, [messages, typing]);
+
+  useEffect(
+    () => () => {
+      if (timer.current) clearTimeout(timer.current);
+    },
+    []
+  );
+
+  function ask(question: string) {
+    const q = question.trim();
+    if (!q || typing) return;
+
+    setMessages((m) => [...m, { id: nextId.current++, from: "user", text: q }]);
+    setInput("");
+    setTyping(true);
+
+    const reply = getBotReply(q);
+    // A short "typing…" pause so it feels like a conversation; a bit
+    // longer for longer answers, never more than about a second.
+    const delay = 450 + Math.min(reply.text.length, 400) * 1.2;
+    timer.current = setTimeout(() => {
+      setMessages((m) => [...m, { id: nextId.current++, from: "bot", ...reply }]);
+      setTyping(false);
+    }, delay);
+  }
+
+  function onSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    ask(input);
+  }
+
+  return (
+    <section
+      aria-label="Chat with Talia's assistant"
+      className="flex min-h-0 flex-col overflow-hidden rounded-2xl bg-[var(--card-bg)] shadow-sm text-left"
+    >
+      {/* Header — says clearly it's an automatic bot, not a live chat */}
+      <div className="flex items-center gap-3 border-b border-[var(--chip-bg)] px-4 py-2.5">
+        <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[var(--chip-bg)] text-[var(--accent-contact)]">
+          <GhostIcon />
+        </span>
+        <div className="min-w-0">
+          <p className="font-display font-bold text-sm sm:text-base leading-tight">
+            Ask about Talia
+          </p>
+          <p className="font-body text-xs leading-tight text-[var(--intro-body)]">
+            Auto-replies based on this site
+          </p>
+        </div>
+      </div>
+
+      {/* Conversation */}
+      <div
+        ref={listRef}
+        role="log"
+        aria-live="polite"
+        className="folder-scroll min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3"
+      >
+        {messages.map((m) => (
+          <div
+            key={m.id}
+            className={`flex ${m.from === "user" ? "justify-end" : "justify-start"}`}
+          >
+            <div className="max-w-[88%]">
+              <p
+                className={`select-text whitespace-pre-line break-words rounded-2xl px-3.5 py-2.5 font-body text-sm leading-relaxed ${
+                  m.from === "user"
+                    ? "rounded-br-md bg-[var(--btn-bg)] text-[var(--btn-text)]"
+                    : "rounded-bl-md bg-[var(--chip-bg)] text-[var(--intro-body)]"
+                }`}
+              >
+                {m.text}
+              </p>
+              {m.links && m.links.length > 0 && (
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {m.links.map((l) => (
+                    <ChatLink key={l.label} link={l} />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+
+        {typing && (
+          <div className="flex justify-start" aria-hidden="true">
+            <div className="flex items-center gap-1 rounded-2xl rounded-bl-md bg-[var(--chip-bg)] px-3.5 py-3.5">
+              {[0, 150, 300].map((d) => (
+                <span
+                  key={d}
+                  className="h-1.5 w-1.5 animate-bounce rounded-full bg-[var(--accent-contact)] motion-reduce:animate-none"
+                  style={{ animationDelay: `${d}ms` }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Quick questions */}
+      <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 pb-2">
+        {SUGGESTIONS.map((s) => (
+          <button
+            key={s.label}
+            type="button"
+            disabled={typing}
+            onClick={() => ask(s.question)}
+            className="flex-shrink-0 rounded-full bg-[var(--link-btn-bg)] px-3 py-1.5 font-body text-xs font-semibold text-[var(--link-btn-text)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[var(--link-btn-bg-hover)] disabled:cursor-not-allowed disabled:opacity-60" data-sfx="hover"
+          >
+            {s.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Input */}
+      <form
+        onSubmit={onSubmit}
+        className="flex items-center gap-2 border-t border-[var(--chip-bg)] px-3 py-2.5"
+      >
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          maxLength={200}
+          autoComplete="off"
+          aria-label="Type your question about Talia"
+          placeholder="Ask me anything about Talia…"
+          className="min-w-0 flex-1 select-text rounded-full bg-[var(--chip-bg)] px-4 py-2.5 font-body text-base text-[var(--intro-title)] outline-none placeholder:text-[var(--accent-about)] focus-visible:ring-2 focus-visible:ring-[var(--btn-bg)]"
+        />
+        <button
+          type="submit"
+          disabled={typing || !input.trim()}
+          aria-label="Send question"
+          className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--btn-bg)] text-[var(--btn-text)] transition-all duration-200 ease-out hover:bg-[var(--btn-bg-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <SendIcon />
+        </button>
+      </form>
+    </section>
+  );
+}
+
+// ---- The bot's brain ------------------------------------------------------
+// A small rule-based bot: no API key, no server, no cost. It looks for
+// keywords in the question (English + Indonesian) and answers from the
+// SAME data the tabs render (PROJECTS, CERTIFICATIONS, EDUCATION, …), so
+// when you edit that data both the tab and the bot update together.
+// It never invents anything — if it can't match a question it says so
+// and points to email instead.
+
+type BotLink = { label: string; href: string; download?: boolean };
+type BotReply = { text: string; links?: BotLink[] };
+
+const BOT_GREETING =
+  "Hi there! 👋 I'm Talia's little assistant bot. Ask me about her skills, projects, certifications, education, or experience — or tap a suggestion below.";
+
+// lowercase, letters/digits only, single spaces ("Next.js" -> "next js")
+function normalize(input: string): string {
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// whole-word (or whole-phrase) match, tolerating a plural "s"
+function mentions(text: string, phrase: string): boolean {
+  return new RegExp(`(^| )${phrase}s?( |$)`).test(text);
+}
+
+function listNames(names: string[], max = 6): string {
+  if (names.length <= max) return names.join(", ");
+  return `${names.slice(0, max).join(", ")} and ${names.length - max} more`;
+}
+
+function bullets(lines: string[]): string {
+  return lines.map((l) => `• ${l}`).join("\n");
+}
+
+// -- technologies --
+
+// "Next.js" / "nextjs" / "next js" all become "next"; "js" -> "javascript"
+function canonTech(raw: string): string {
+  return normalize(raw)
+    .replace(/\breact native\b/g, " ") // a different technology — don't read it as "react"
+    .replace(/\b(next|react|node)\s?js\b/g, "$1")
+    .replace(/\btailwindcss\b/g, "tailwind css")
+    .replace(/\btailwind\b(?! css)/g, "tailwind css")
+    .replace(/\bjs\b/g, "javascript")
+    .replace(/\bts\b/g, "typescript")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+type TechEntry = { key: string; label: string; inStack: boolean; projects: string[] };
+
+// "github" is left out on purpose: asking about GitHub means "where is
+// her GitHub?" (contact), not "does she know GitHub?".
+const NON_TECH_KEYS = new Set(["git", "github"]);
+
+function buildTechIndex(): TechEntry[] {
+  const map = new Map<string, TechEntry>();
+  const add = (label: string, project?: string, fromStack = false) => {
+    label.split("&").forEach((part) => {
+      const name = part.trim();
+      const key = canonTech(name);
+      if (!key || NON_TECH_KEYS.has(key)) return;
+      let entry = map.get(key);
+      if (!entry) {
+        entry = { key, label: name, inStack: false, projects: [] };
+        map.set(key, entry);
+      }
+      if (fromStack) {
+        entry.inStack = true;
+        entry.label = name; // prefer the spelling used in the tech stack
+      }
+      if (project && entry.projects.indexOf(project) === -1) entry.projects.push(project);
+    });
+  };
+  TECH_STACK.forEach((t) => add(t, undefined, true));
+  PROJECTS.forEach((p) => p.tech.forEach((t) => add(t, p.name)));
+  return Array.from(map.values());
+}
+
+const TECH_INDEX = buildTechIndex();
+
+// -- projects --
+
+const GENERIC_WORDS = new Set(["service", "management", "system", "making", "profile"]);
+
+// Names a visitor might use for a project: its title, the image file name
+// ("bengkel", "sijelantah"…), a word in parentheses ("POS"), and any single
+// word that is unique to that project.
+function projectAliases(p: Project): string[] {
+  const aliases = new Set<string>();
+  aliases.add(normalize(p.name));
+  aliases.add(normalize(p.name.replace(/\(.*?\)/g, "")));
+  const inParens = p.name.match(/\(([^)]+)\)/);
+  if (inParens) aliases.add(normalize(inParens[1]));
+  const slug = (p.image.split("/").pop() ?? "").replace(/\.[a-z0-9]+$/i, "");
+  if (slug) aliases.add(normalize(slug));
+  normalize(p.name)
+    .split(" ")
+    .forEach((w) => {
+      if (w.length < 6 || GENERIC_WORDS.has(w)) return;
+      const owners = PROJECTS.filter((o) => normalize(o.name).split(" ").indexOf(w) !== -1);
+      if (owners.length === 1) aliases.add(w);
+    });
+  return Array.from(aliases).filter(Boolean);
+}
+
+const PROJECT_MATCHERS = PROJECTS.map((p) => ({ project: p, aliases: projectAliases(p) }));
+
+function replyProject(p: Project): BotReply {
+  const links: BotLink[] = [];
+  if (p.liveUrl) links.push({ label: "View", href: p.liveUrl });
+  if (p.githubUrl) links.push({ label: "GitHub", href: p.githubUrl });
+  if (p.figmaUrl) links.push({ label: "Figma", href: p.figmaUrl });
+  return {
+    text: `${p.name} (${PROJECT_TYPE_LABEL[p.type]}) — Talia's role: ${p.role}.\n\n${p.desc}\n\nTech: ${p.tech.join(", ")}.`,
+    links,
+  };
+}
+
+function replyProjectList(list: Project[]): BotReply {
+  return {
+    text: `Here are those projects:\n${bullets(
+      list.map((p) => `${p.name} — ${p.role} (${p.tech.join(", ")})`)
+    )}\n\nAsk about one of them by name for the full details and links.`,
+  };
+}
+
+function replyTech(text: string): BotReply | null {
+  const q = ` ${canonTech(text)} `;
+  const found = TECH_INDEX.filter((t) => q.indexOf(` ${t.key} `) !== -1);
+  // "css" is also inside "tailwind css" — keep only the longest match
+  const hits = found.filter((t) => !found.some((u) => u !== t && u.key.indexOf(t.key) !== -1));
+  if (hits.length === 0) return null;
+
+  const lines = hits.slice(0, 3).map((t) => {
+    const intro = t.inStack
+      ? `Yes! ${t.label} is part of Talia's main tech stack.`
+      : `Yes — Talia has worked with ${t.label}.`;
+    if (t.projects.length === 0) return intro;
+    const count = t.projects.length === 1 ? "1 project" : `${t.projects.length} projects`;
+    return `${intro} She has used it in ${count}: ${listNames(t.projects)}.`;
+  });
+  return { text: lines.join("\n\n") };
+}
+
+// -- topic replies --
+
+function replySkills(): BotReply {
+  const extras = TECH_INDEX.filter((t) => !t.inStack).map((t) => t.label);
+  const example = extras.find((l) => /flutter/i.test(l)) ?? extras[0] ?? TECH_STACK[0];
+  const parts = [`Talia's main tech stack: ${TECH_STACK.join(", ")}.`];
+  if (extras.length > 0) {
+    parts.push(`Across her projects she has also worked with: ${extras.join(", ")}.`);
+  }
+  parts.push(`Ask about any of them (try "${example}") and I'll tell you where she used it.`);
+  return { text: parts.join("\n\n") };
+}
+
+function replyProjects(): BotReply {
+  const finals = PROJECTS.filter((p) => p.type === "final").length;
+  const teams = PROJECTS.length - finals;
+  const highlights = PROJECTS.slice(0, 4).map((p) => p.name).join(", ");
+  return {
+    text: `Talia has worked on ${PROJECTS.length} projects (${finals} final projects and ${teams} team projects) across web, mobile and UI design. Some of them: ${highlights}.\n\nAsk me about any project by name, or open the Project tab to see them all.`,
+  };
+}
+
+function replyCertifications(): BotReply {
+  return {
+    text: `Talia holds ${CERTIFICATIONS.length} certifications:\n${bullets(
+      CERTIFICATIONS.map((c) => `${c.name} — ${c.issuer} (${c.year})`)
+    )}\n\nThe Certification tab shows the certificates themselves.`,
+  };
+}
+
+function replyEducation(): BotReply {
+  return {
+    text: `Education:\n${bullets(
+      EDUCATION.map((e) => `${e.school} — ${e.detail} (${e.period})`)
+    )}`,
+  };
+}
+
+function replyExperience(): BotReply {
+  const intern = INTERNSHIPS.map(
+    (i) => `${i.company} — ${i.role} (${i.period})\n${bullets(i.points ?? [])}`
+  ).join("\n\n");
+  const orgs = ORGANIZATIONS.map((o) => `${o.name} (${o.role})`).join(", ");
+  return {
+    text: `Internship experience:\n${intern}\n\nBesides that, she's been active in ${orgs}. Ask me about organizations for the details.`,
+  };
+}
+
+function replyOrganizations(): BotReply {
+  return {
+    text: `Organization experience:\n${ORGANIZATIONS.map(
+      (o) => `${o.name} — ${o.role} (${o.period})\n${bullets(o.points ?? [])}`
+    ).join("\n\n")}`,
+  };
+}
+
+function replyLanguages(): BotReply {
+  return {
+    text: `Talia speaks ${LANGUAGES.map((l) => `${l.name} (${l.level})`).join(" and ")}.\n\nLooking for programming languages? Ask me about her tech stack.`,
+  };
+}
+
+function replyContact(q: string): BotReply {
+  const other = /(linkedin|instagram|whatsapp|telegram|twitter|facebook|tiktok)/.test(q);
+  return {
+    text: `${other ? "I don't have that one listed, but you" : "You"} can reach Talia here:\n${bullets(
+      CONTACT_LINKS.map((c) => `${c.label}: ${c.value}`)
+    )}\n\nGot a project or collaboration in mind? Email is the fastest way.`,
+    links: CONTACT_LINKS.map((c) => ({ label: c.label, href: c.href })),
+  };
+}
+
+function replyCv(): BotReply {
+  return {
+    text: "You can download Talia's CV right here:",
+    links: [{ label: "Download CV", href: CV_URL, download: true }],
+  };
+}
+
+function replyDesign(): BotReply {
+  const ui = PROJECTS.filter((p) => /ui|design/i.test(p.role)).map((p) => p.name);
+  const withFigma = PROJECTS.filter((p) => p.figmaUrl).length;
+  const parts = [
+    "Design is a big part of how Talia works: she moves from research and wireframe sketches to polished interfaces in Figma, then builds them in code.",
+  ];
+  if (ui.length > 0) parts.push(`UI design projects: ${listNames(ui)}.`);
+  parts.push(
+    `${withFigma} of her ${PROJECTS.length} projects have a Figma design linked — ask me about a project to get the link.`
+  );
+  return { text: parts.join("\n\n") };
+}
+
+function replyAbout(): BotReply {
+  const edu = EDUCATION[0];
+  return {
+    text: `Talia Aprianti is a Web Developer and UI/UX enthusiast who builds clean, friendly, and easy-to-use digital products — from small research and wireframe sketches to polished interfaces in Figma, then real code with React, Next.js, and Tailwind CSS.${
+      edu ? `\n\nShe studied ${edu.detail} at ${edu.school}.` : ""
+    }\n\nAsk me about her skills, projects, certifications, education or experience.`,
+  };
+}
+
+function replyHelp(): BotReply {
+  return {
+    text: "I can answer questions about Talia:\n• her tech stack and skills\n• her projects (try a project name!)\n• certifications and education\n• internship and organization experience\n• how to contact her or get her CV\n\nI understand English and Indonesian.",
+  };
+}
+
+const FALLBACK: BotReply = {
+  text: "Hmm, I don't know that one yet 🙈 I can tell you about Talia's skills, projects, certifications, education or experience. For anything else, the best way is to email her:",
+  links: CONTACT_LINKS.filter((c) => c.href.startsWith("mailto:")).map((c) => ({
+    label: c.label,
+    href: c.href,
+  })),
+};
+
+// -- keyword routing --
+
+type Intent = { keywords: string[]; reply: (q: string) => BotReply };
+
+// Keywords are word beginnings ("certif" matches certificate / certification),
+// except very short ones ("cv", "ui") which must match a whole word. When a
+// question matches several topics, the one with the most keyword hits wins;
+// on a tie the topic listed first wins — so greeting/about stay at the end.
+const INTENTS: Intent[] = [
+  { keywords: ["cv", "resume", "curriculum", "download", "unduh"], reply: replyCv },
+  {
+    keywords: [
+      "contact", "kontak", "email", "mail", "github", "reach", "hire", "hubungi", "hubung",
+      "collab", "kolaborasi", "message", "pesan", "dm", "whatsapp", "linkedin", "instagram",
+      "social", "sosmed", "available", "freelance", "open to", "hiring", "recruit", "rekrut",
+    ],
+    reply: replyContact,
+  },
+  {
+    keywords: ["ui", "ux", "design", "desain", "wireframe", "prototype", "prototipe", "interface"],
+    reply: replyDesign,
+  },
+  {
+    keywords: [
+      "skill", "git", "tech stack", "technolog", "teknolog", "tools", "stack", "programming",
+      "pemrograman", "coding", "coder", "kemampuan", "keahlian", "kuasai", "framework",
+      "expert", "good at", "what can she", "strength", "frontend", "front end", "backend",
+      "back end", "database", "fullstack", "full stack",
+    ],
+    reply: replySkills,
+  },
+  {
+    keywords: [
+      "project", "proyek", "projek", "portfolio", "portofolio", "karya", "built", "build",
+      "made", "create", "aplikasi", "app", "apps", "website", "web app", "hasil",
+    ],
+    reply: replyProjects,
+  },
+  {
+    keywords: [
+      "certif", "sertif", "course", "kursus", "bnsp", "revou", "google", "coursera",
+      "license", "lisensi", "credential", "kompetensi",
+    ],
+    reply: replyCertifications,
+  },
+  {
+    keywords: [
+      "educat", "pendidikan", "universit", "univ", "kampus", "campus", "college", "kuliah",
+      "school", "sekolah", "smk", "upn", "degree", "gelar", "sarjana", "major", "jurusan",
+      "study", "studi", "graduat", "lulus", "bachelor", "skripsi",
+    ],
+    reply: replyEducation,
+  },
+  {
+    keywords: [
+      "experience", "pengalaman", "intern", "magang", "career", "karir", "karier", "worked",
+      "working", "kerja", "bekerja", "pekerjaan", "company", "perusahaan", "otak kanan",
+      "employment", "job",
+    ],
+    reply: replyExperience,
+  },
+  {
+    keywords: [
+      "organi", "ukm", "badminton", "kominfo", "volunteer", "komunitas", "community",
+      "leadership", "himpunan", "extracurricular",
+    ],
+    reply: replyOrganizations,
+  },
+  {
+    keywords: ["language", "bahasa", "speak", "english", "inggris", "indonesian", "indonesia", "fluent", "bilingual"],
+    reply: replyLanguages,
+  },
+  { keywords: ["help", "bantu", "what can you", "can you", "menu", "options"], reply: replyHelp },
+  {
+    keywords: ["thank", "thanks", "makasih", "terima kasih", "thx", "tengkyu", "trims"],
+    reply: () => ({ text: "You're welcome! 😊 Anything else you'd like to know about Talia?" }),
+  },
+  {
+    keywords: ["bye", "goodbye", "see you", "sampai jumpa", "dadah"],
+    reply: () => ({ text: "Bye for now! 👋 Thanks for stopping by Talia's portfolio." }),
+  },
+  {
+    keywords: ["who", "siapa", "about", "tentang", "introduce", "perkenal", "yourself", "name", "nama", "what does she do", "occupation"],
+    reply: replyAbout,
+  },
+  {
+    keywords: ["hi", "hello", "hey", "hai", "halo", "hallo", "pagi", "siang", "sore", "malam", "selamat", "assalam"],
+    reply: () => ({ text: BOT_GREETING }),
+  },
+];
+
+function hasKeyword(words: string[], text: string, kw: string): boolean {
+  if (kw.indexOf(" ") !== -1) return text.indexOf(kw) !== -1;
+  if (kw.length <= 3) return words.indexOf(kw) !== -1;
+  return words.some((w) => w.indexOf(kw) === 0);
+}
+
+function pickIntent(text: string): Intent | null {
+  const words = text.split(" ");
+  let best: Intent | null = null;
+  let bestScore = 0;
+  for (const intent of INTENTS) {
+    const score = intent.keywords.filter((kw) => hasKeyword(words, text, kw)).length;
+    if (score > bestScore) {
+      best = intent;
+      bestScore = score;
+    }
+  }
+  return best;
+}
+
+function getBotReply(question: string): BotReply {
+  const text = normalize(question);
+  if (!text) return FALLBACK;
+
+  // React Native isn't something she lists — be honest about it
+  if (/\breact native\b/.test(text)) {
+    return {
+      text: "I don't see React Native on Talia's list. For mobile apps she has used Flutter and Android Studio — ask me about them!",
+    };
+  }
+
+  // 1) a specific project, by name
+  const projects = PROJECT_MATCHERS.filter((m) =>
+    m.aliases.some((a) => mentions(text, a))
+  ).map((m) => m.project);
+  if (projects.length === 1) return replyProject(projects[0]);
+  if (projects.length > 1) return replyProjectList(projects);
+
+  // 2) a specific technology
+  const tech = replyTech(text);
+  if (tech) return tech;
+
+  // 3) a general topic
+  const intent = pickIntent(text);
+  if (intent) return intent.reply(text);
+
+  return FALLBACK;
 }

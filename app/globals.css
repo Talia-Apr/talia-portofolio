@@ -70,6 +70,8 @@ body {
   --badge-team-text: #1f7a4d;
   --badge-final-bg: #ffe4c4;
   --badge-final-text: #9a5b12;
+  --badge-personal-bg: #dfeef3;
+  --badge-personal-text: #067ca4;
   --link-btn-bg: rgba(122, 15, 61, 0.08);
   --link-btn-bg-hover: rgba(122, 15, 61, 0.16);
   --link-btn-text: #7a0f3d;
@@ -161,6 +163,8 @@ body {
   --badge-team-text: #7ee2a8;
   --badge-final-bg: rgba(255, 176, 59, 0.18);
   --badge-final-text: #ffc978;
+  --badge-personal-bg: #3c4c52;
+  --badge-personal-text: #56c4e8;
   --link-btn-bg: rgba(255, 255, 255, 0.1);
   --link-btn-bg-hover: rgba(255, 255, 255, 0.2);
   --link-btn-text: #f6d9e4;
