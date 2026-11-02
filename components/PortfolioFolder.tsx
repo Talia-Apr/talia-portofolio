@@ -239,7 +239,7 @@ const CERTIFICATIONS = [
 
 // ---- About tab content ------------------
 const PROFILE_PHOTO = "/img/talia.png"; 
-const CV_URL = "/doc/cv-talia.pdf"; 
+const CV_URL = "/doc/cv_talia.pdf"; 
 
 const EDUCATION = [
   {
@@ -403,7 +403,7 @@ function IntroPane() {
         Hi, I'm <span className="text-[var(--accent-contact)]">Talia!</span>
       </h1>
       <h2 className="font-display font-bold text-xl sm:text-3xl text-[var(--intro-subtitle)]">
-        I'm a Web Developer
+        I'm a Developer
       </h2>
       <p className="font-body text-sm sm:text-xl leading-relaxed text-[var(--intro-body)] max-w-[34rem] pt-1 sm:pt-2">
         I transform complex ideas into clean, scalable web &amp; mobile solutions
